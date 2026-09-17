@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ik Dien - Opstelling Planner</title>
+    <style>
+      /* --- Color Palette & Variables --- */
+      :root {
+        --primary: #4E2F75;
+        --primary-hover: #3E245E;
+        --primary-dark: #311B4B;
+        --primary-light: #F3EFF9;
+        --primary-tint: #E5DCF0;
+        --primary-ring: rgba(78, 47, 117, 0.18);
+
+        --sub-color: #7E57C2;
+        --sub-color-light: #EDE7F6;
+
+        --bg-body: #F7F5FA;
+        --surface: #FFFFFF;
+        --border-color: #E2DCED;
+        --border-subtle: #EDE7F4;
+
+        --text-main: #1E162A;
+        --text-muted: #6E657D;
+        --text-light: #FFFFFF;
+
+        --danger: #DC2626;
+        --danger-bg: #FEF2F2;
+        --danger-border: #FEE2E2;
+
+        --pitch-light: #2D8A4E;
+        --line-color: rgba(255, 255, 255, 0.75);
+
+        --shadow-sm: 0 1px 3px rgba(78, 47, 117, 0.05);
+        --shadow-md: 0 4px 16px rgba(78, 47, 117, 0.08);
+        --shadow-lg: 0 12px 28px rgba(78, 47, 117, 0.12);
+      }
+
+      /* --- Base Reset --- */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        min-height: 100vh;
+        padding: 1.75rem 1.5rem 2.5rem;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* --- Layout --- */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 1.5rem;
+      }
+
+      @media (max-width: 950px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+
+        .match-toolbar {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .app-header {
+        grid-column: 1 / -1;
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 0.25rem;
+        color: var(--primary);
+        font-size: 2rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+      }
+
+      .app-subtitle {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        font-weight: 500;
+        letter-spacing: 0.4px;
+      }
+
+      .panel {
+        background: var(--surface);
+        padding: 1.5rem;
+        border-radius: 14px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+        display: flex;
+        flex-direction: column;
+      }
+
+      h2 {
+        margin-bottom: 1.25rem;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--primary);
+        border-bottom: 2px solid var(--primary-tint);
+        padding-bottom: 0.65rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .squad-count-badge {
+        font-size: 0.8rem;
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 3px 9px;
+        border-radius: 12px;
+        border: 1px solid var(--primary-tint);
+        font-weight: 700;
+      }
+
+      /* --- Form & Squad List --- */
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .form-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .match-toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        gap: 0.65rem;
+        margin-bottom: 1.25rem;
+      }
+
+      label {
+        color: var(--primary);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        border: 1.5px solid var(--border-color);
+        background: var(--surface);
+        color: var(--text-main);
+        border-radius: 8px;
+        outline: none;
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      input:focus,
+      select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-ring);
+      }
+      input::placeholder {
+        color: #9E96AA;
+      }
+
+      button.btn {
+        padding: 0.65rem 1.1rem;
+        background: var(--primary);
+        color: var(--text-light);
+        border: 1.5px solid var(--primary);
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(78, 47, 117, 0.2);
+        transition:
+          background-color 0.2s,
+          border-color 0.2s,
+          box-shadow 0.2s,
+          transform 0.1s;
+      }
+      button.btn:hover {
+        background: var(--primary-hover);
+        border-color: var(--primary-hover);
+        box-shadow: 0 4px 10px rgba(78, 47, 117, 0.3);
+      }
+      button.btn:active {
+        transform: scale(0.98);
+      }
+      button.btn-secondary {
+        background: var(--surface);
+        color: var(--primary);
+        border: 1.5px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        font-size: 0.85rem;
+        padding: 0.55rem 0.95rem;
+      }
+      button.btn-secondary:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      #deleteMatchButton:hover {
+        background: var(--danger-bg);
+        color: var(--danger);
+        border-color: var(--danger-border);
+      }
+
+      .squad-list {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-right: 0.25rem;
+      }
+
+      .squad-list::-webkit-scrollbar {
+        width: 6px;
+      }
+      .squad-list::-webkit-scrollbar-track {
+        background: var(--bg-body);
+        border-radius: 3px;
+      }
+      .squad-list::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+      }
+      .squad-list::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-tint);
+      }
+
+      .squad-sort {
+        margin-bottom: 1rem;
+      }
+
+      .squad-item {
+        background: var(--surface);
+        border: 1px solid var(--border-color);
+        padding: 0.75rem 0.85rem;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+      }
+      .squad-item:hover {
+        border-color: var(--primary-tint);
+        box-shadow: var(--shadow-md);
+      }
+
+      .squad-item-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        flex: 1;
+      }
+      .squad-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .squad-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-main);
+      }
+
+      .time-badge {
+        font-size: 0.72rem;
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-weight: 700;
+        border: 1px solid var(--primary-tint);
+        white-space: nowrap;
+      }
+      .time-badge.zero {
+        background: var(--bg-body);
+        color: var(--text-muted);
+        border-color: var(--border-color);
+      }
+
+      .badges-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .pos-badge {
+        background: var(--primary);
+        color: var(--text-light);
+        font-size: 0.68rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .pos-badge.sub {
+        background: var(--sub-color);
+      }
+
+      .remove-btn {
+        background: transparent;
+        color: var(--text-muted);
+        border: none;
+        cursor: pointer;
+        font-size: 1.25rem;
+        line-height: 1;
+        padding: 0 0.2rem;
+        border-radius: 4px;
+        transition: color 0.15s, background-color 0.15s;
+      }
+      .remove-btn:hover {
+        color: var(--danger);
+        background-color: var(--danger-bg);
+      }
+
+      /* --- Tactical Pitches Grid --- */
+      .pitches-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(336px, 1fr));
+        gap: 1.5rem;
+      }
+      .pitch-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: var(--surface);
+        padding: 1.25rem;
+        border-radius: 14px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow 0.2s, border-color 0.2s;
+      }
+      .pitch-container:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-tint);
+      }
+      .pitch-title {
+        color: var(--primary);
+        margin-bottom: 0.85rem;
+        font-weight: 800;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        background: var(--primary-light);
+        padding: 3px 14px;
+        border-radius: 20px;
+        border: 1px solid var(--primary-tint);
+      }
+
+      .pitch {
+        width: 100%;
+        max-width: 499px;
+        aspect-ratio: 2 / 3;
+        background: var(--pitch-light);
+        border: 2px solid var(--line-color);
+        border-radius: 8px;
+        position: relative;
+        box-shadow: 0 4px 14px rgba(78, 47, 117, 0.15);
+        overflow: hidden;
+      }
+
+      /* Pitch Markings */
+      .pitch-line {
+        position: absolute;
+        background: var(--line-color);
+      }
+      .halfway-line {
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        transform: translateY(-50%);
+      }
+      .center-circle {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70px;
+        height: 70px;
+        border: 2px solid var(--line-color);
+        border-radius: 50%;
+        position: absolute;
+      }
+      .center-spot {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 6px;
+        height: 6px;
+        background: var(--line-color);
+        border-radius: 50%;
+        position: absolute;
+      }
+      .penalty-box-top {
+        top: 0;
+        left: 25%;
+        width: 50%;
+        height: 16%;
+        border: 2px solid var(--line-color);
+        border-top: none;
+        position: absolute;
+      }
+      .penalty-box-bottom {
+        bottom: 0;
+        left: 25%;
+        width: 50%;
+        height: 16%;
+        border: 2px solid var(--line-color);
+        border-bottom: none;
+        position: absolute;
+      }
+
+      /* --- Player Nodes --- */
+      .player-node {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 10;
+        transition: transform 0.2s;
+      }
+      .player-node:not(.empty):hover {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+
+      .jersey {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+        border: 2px solid #ffffff;
+        position: relative;
+        color: #ffffff;
+      }
+      .jersey.full {
+        background: var(--primary);
+      }
+      .jersey.split {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 50%,
+          var(--sub-color) 50%
+        );
+      }
+      .jersey.ghost {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1.5px dashed rgba(255, 255, 255, 0.8);
+        color: #ffffff;
+        font-size: 0.75rem;
+        box-shadow: none;
+        cursor: pointer;
+      }
+      .player-node.empty:hover .jersey.ghost {
+        background: var(--primary);
+        border-color: #ffffff;
+        color: #ffffff;
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .player-name {
+        margin-top: 4px;
+        font-size: 0.85rem;
+        background: rgba(30, 22, 42, 0.88);
+        color: #ffffff;
+        padding: 3px 7px;
+        border-radius: 4px;
+        white-space: nowrap;
+        font-weight: 700;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+      }
+
+      .unassign-btn {
+        display: none;
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: var(--danger);
+        color: #ffffff;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+      .player-node:hover .unassign-btn {
+        display: flex;
+      }
+
+      /* --- Modal System --- */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(30, 22, 42, 0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+        backdrop-filter: blur(6px);
+      }
+      .modal-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .modal-content {
+        background: var(--surface);
+        color: var(--text-main);
+        padding: 1.75rem;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 380px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 20px 45px rgba(78, 47, 117, 0.18);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+      }
+      .modal-header h3 {
+        color: var(--primary);
+        font-weight: 700;
+      }
+      .close-modal {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.5rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 2px 6px;
+        border-radius: 6px;
+        transition: color 0.15s, background-color 0.15s;
+      }
+      .close-modal:hover {
+        color: var(--primary);
+        background-color: var(--primary-light);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="panel">
+        <h2>
+          Squad List
+          <span id="squadCount" class="squad-count-badge">0</span>
+        </h2>
+        <div class="squad-sort">
+          <label for="squadSort">Sort squad</label>
+          <select id="squadSort">
+            <option value="name">Alphabetical (A-Z)</option>
+            <option value="minutes">Played minutes (most first)</option>
+          </select>
+        </div>
+        <form id="addPlayerForm" class="form-group form-row">
+          <input
+            type="text"
+            id="playerName"
+            placeholder="Add new player..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit" class="btn">+</button>
+        </form>
+        <div class="squad-list" id="squadList"></div>
+      </div>
+
+      <div class="panel">
+        <div class="match-toolbar">
+          <select id="matchSelect" aria-label="Saved matches"></select>
+          <button type="button" class="btn btn-secondary" id="newMatchButton">
+            New Match
+          </button>
+          <button type="button" class="btn" id="saveMatchButton">
+            Save Match
+          </button>
+          <button type="button" class="btn btn-secondary" id="deleteMatchButton">
+            Delete Match
+          </button>
+        </div>
+        <div class="form-group">
+          <label for="matchTitle">Match Title</label>
+          <input type="text" id="matchTitle" placeholder="Enter match title..." />
+        </div>
+        <div class="form-group">
+          <label for="matchDate">Match Date</label>
+          <input type="date" id="matchDate" />
+        </div>
+        <div class="pitches-grid" id="pitchesGrid"></div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="assignModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 style="margin: 0; font-size: 1.1rem">
+            Assign <span id="modalPosName" style="color: var(--primary)"></span>
+            <small style="color: var(--text-muted); font-weight: normal"
+              >(Quarter <span id="modalQuarterName"></span>)</small
+            >
+          </h3>
+          <button class="close-modal" onclick="closeModal()">×</button>
+        </div>
+
+        <div class="form-group">
+          <label>First Half (0:00 - 7:30)</label>
+          <select id="half1Select"></select>
+        </div>
+
+        <div style="text-align: center; margin: 10px 0">
+          <button class="btn btn-secondary" onclick="copyHalf1ToHalf2()">
+            ↓ Play Full Quarter ↓
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label>Second Half (7:30 - 15:00)</label>
+          <select id="half2Select"></select>
+        </div>
+
+        <button
+          class="btn"
+          style="width: 100%; margin-top: 1rem"
+          onclick="saveAssignments()"
+        >
+          Confirm Selection
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- State Management ---
+      const STORAGE_KEY = "matchday-tactical-board-players";
+      const MATCH_DETAILS_KEY = "matchday-tactical-board-details";
+      const MATCHES_STORAGE_KEY = "matchday-tactical-board-matches";
+      let matches = loadMatches();
+      let currentMatchId = matches.length > 0 ? matches[0].id : null;
+      let players = [];
+      let matchDetails = {};
+      let activePosition = null;
+      let activeQuarter = null;
+      const MINUTES_PER_HALF = 7.5; // 7 mins 30 secs
+
+      const formationCoords = {
+        ST: { top: "15%", left: "50%" },
+        LW: { top: "30%", left: "20%" },
+        RW: { top: "30%", left: "80%" },
+        CM: { top: "50%", left: "50%" },
+        LB: { top: "68%", left: "20%" },
+        RB: { top: "68%", left: "80%" },
+        CB: { top: "80%", left: "50%" },
+        GK: { top: "92%", left: "50%" },
+      };
+
+      const form = document.getElementById("addPlayerForm");
+      const squadListEl = document.getElementById("squadList");
+      const pitchesGridEl = document.getElementById("pitchesGrid");
+      const squadCountEl = document.getElementById("squadCount");
+      const modal = document.getElementById("assignModal");
+      const squadSort = document.getElementById("squadSort");
+      const matchSelect = document.getElementById("matchSelect");
+      const newMatchButton = document.getElementById("newMatchButton");
+      const saveMatchButton = document.getElementById("saveMatchButton");
+      const deleteMatchButton = document.getElementById("deleteMatchButton");
+      const matchTitleInput = document.getElementById("matchTitle");
+      const matchDateInput = document.getElementById("matchDate");
+
+      function loadPlayers() {
+        try {
+          const savedPlayers = localStorage.getItem(STORAGE_KEY);
+          const parsedPlayers = savedPlayers ? JSON.parse(savedPlayers) : [];
+          return Array.isArray(parsedPlayers) ? parsedPlayers : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function savePlayers() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+        } catch (error) {
+          // Keep the board usable when browser storage is unavailable.
+        }
+      }
+
+      function loadMatchDetails() {
+        try {
+          const savedDetails = localStorage.getItem(MATCH_DETAILS_KEY);
+          const parsedDetails = savedDetails ? JSON.parse(savedDetails) : {};
+          return parsedDetails && typeof parsedDetails === "object"
+            ? parsedDetails
+            : {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function saveMatchDetails() {
+        try {
+          localStorage.setItem(MATCH_DETAILS_KEY, JSON.stringify(matchDetails));
+        } catch (error) {
+          // Keep the board usable when browser storage is unavailable.
+        }
+      }
+
+      function loadMatches() {
+        try {
+          const savedMatches = localStorage.getItem(MATCHES_STORAGE_KEY);
+          const parsedMatches = savedMatches ? JSON.parse(savedMatches) : null;
+          if (Array.isArray(parsedMatches)) return parsedMatches;
+
+          const legacyPlayers = loadPlayers();
+          const legacyDetails = loadMatchDetails();
+          if (legacyPlayers.length > 0 || legacyDetails.title || legacyDetails.date) {
+            return [
+              {
+                id: Date.now(),
+                title: legacyDetails.title || "Untitled Match",
+                date: legacyDetails.date || "",
+                players: legacyPlayers,
+              },
+            ];
+          }
+        } catch (error) {
+          return [];
+        }
+        return [];
+      }
+
+      function saveMatches() {
+        try {
+          localStorage.setItem(MATCHES_STORAGE_KEY, JSON.stringify(matches));
+        } catch (error) {
+          // Keep the board usable when browser storage is unavailable.
+        }
+      }
+
+      function loadCurrentMatch() {
+        const currentMatch = matches.find((match) => match.id === currentMatchId);
+        players = currentMatch ? currentMatch.players : [];
+        matchDetails = currentMatch
+          ? { title: currentMatch.title, date: currentMatch.date }
+          : {};
+        matchTitleInput.value = matchDetails.title || "";
+        matchDateInput.value = matchDetails.date || "";
+      }
+
+      function renderMatchSelect() {
+        matchSelect.innerHTML = "";
+        if (matches.length === 0) {
+          matchSelect.innerHTML = '<option value="">No saved matches</option>';
+          deleteMatchButton.disabled = true;
+          return;
+        }
+
+        matches.forEach((match) => {
+          const option = document.createElement("option");
+          option.value = match.id;
+          option.textContent = `${match.title || "Untitled Match"}${match.date ? ` - ${match.date}` : ""}`;
+          matchSelect.appendChild(option);
+        });
+        matchSelect.value = currentMatchId;
+        deleteMatchButton.disabled = false;
+      }
+
+      function saveCurrentMatch() {
+        const match = {
+          id: currentMatchId || Date.now(),
+          title: matchTitleInput.value.trim() || "Untitled Match",
+          date: matchDateInput.value,
+          players,
+        };
+        const existingIndex = matches.findIndex((item) => item.id === currentMatchId);
+        if (existingIndex >= 0) {
+          matches[existingIndex] = match;
+        } else {
+          matches.push(match);
+        }
+        currentMatchId = match.id;
+        matchDetails = { title: match.title, date: match.date };
+        saveMatches();
+        renderMatchSelect();
+        renderApp();
+      }
+
+      function startNewMatch() {
+        currentMatchId = null;
+        players = [];
+        matchDetails = {};
+        matchTitleInput.value = "";
+        matchDateInput.value = "";
+        renderMatchSelect();
+        renderApp();
+      }
+
+      matchSelect.addEventListener("change", function () {
+        currentMatchId = Number(matchSelect.value);
+        loadCurrentMatch();
+        renderApp();
+      });
+      newMatchButton.addEventListener("click", startNewMatch);
+      saveMatchButton.addEventListener("click", saveCurrentMatch);
+      deleteMatchButton.addEventListener("click", function () {
+        matches = matches.filter((match) => match.id !== currentMatchId);
+        currentMatchId = matches.length > 0 ? matches[0].id : null;
+        loadCurrentMatch();
+        saveMatches();
+        renderMatchSelect();
+        renderApp();
+      });
+
+      loadCurrentMatch();
+      renderMatchSelect();
+      matchTitleInput.addEventListener("input", function () {
+        matchDetails.title = matchTitleInput.value;
+      });
+      matchDateInput.addEventListener("input", function () {
+        matchDetails.date = matchDateInput.value;
+      });
+      squadSort.addEventListener("change", renderSquadList);
+
+      // --- Event Listeners ---
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const nameInput = document.getElementById("playerName");
+
+        // Assignments hold data for 4 quarters, 2 halves each (1 = first half, 2 = second half)
+        players.push({
+          id: Date.now(),
+          name: nameInput.value.trim(),
+          assignments: {
+            1: { 1: null, 2: null },
+            2: { 1: null, 2: null },
+            3: { 1: null, 2: null },
+            4: { 1: null, 2: null },
+          },
+        });
+
+        nameInput.value = "";
+        savePlayers();
+        renderApp();
+      });
+
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeModal();
+      });
+
+      // --- Core Functions ---
+      window.deletePlayer = function (id) {
+        players = players.filter((p) => p.id !== id);
+        savePlayers();
+        renderApp();
+      };
+
+      window.unassignPosition = function (quarter, pos, event) {
+        event.stopPropagation();
+        // Remove anyone playing this position in this quarter
+        players.forEach((p) => {
+          if (p.assignments[quarter][1] === pos)
+            p.assignments[quarter][1] = null;
+          if (p.assignments[quarter][2] === pos)
+            p.assignments[quarter][2] = null;
+        });
+        savePlayers();
+        renderApp();
+      };
+
+      window.openModal = function (quarter, pos) {
+        activePosition = pos;
+        activeQuarter = quarter;
+        document.getElementById("modalPosName").textContent = pos;
+        document.getElementById("modalQuarterName").textContent = quarter;
+
+        const h1Select = document.getElementById("half1Select");
+        const h2Select = document.getElementById("half2Select");
+
+        h1Select.innerHTML = '<option value="">-- Empty (Sub Out) --</option>';
+        h2Select.innerHTML = '<option value="">-- Empty (Sub Out) --</option>';
+
+        players.forEach((p) => {
+          h1Select.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+          h2Select.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+        });
+
+        // Pre-select current assignments
+        const p1 = players.find((p) => p.assignments[quarter][1] === pos);
+        const p2 = players.find((p) => p.assignments[quarter][2] === pos);
+
+        if (p1) h1Select.value = p1.id;
+        if (p2) h2Select.value = p2.id;
+
+        modal.classList.add("active");
+      };
+
+      window.closeModal = function () {
+        modal.classList.remove("active");
+      };
+
+      window.copyHalf1ToHalf2 = function () {
+        document.getElementById("half2Select").value =
+          document.getElementById("half1Select").value;
+      };
+
+      window.saveAssignments = function () {
+        const h1Id = Number(document.getElementById("half1Select").value);
+        const h2Id = Number(document.getElementById("half2Select").value);
+
+        // 1. Clear this position entirely for this quarter
+        players.forEach((p) => {
+          if (p.assignments[activeQuarter][1] === activePosition)
+            p.assignments[activeQuarter][1] = null;
+          if (p.assignments[activeQuarter][2] === activePosition)
+            p.assignments[activeQuarter][2] = null;
+        });
+
+        // 2. Assign selected players (This automatically pulls them from any other position they were playing!)
+        if (h1Id) {
+          const player1 = players.find((p) => p.id === h1Id);
+          if (player1) player1.assignments[activeQuarter][1] = activePosition;
+        }
+        if (h2Id) {
+          const player2 = players.find((p) => p.id === h2Id);
+          if (player2) player2.assignments[activeQuarter][2] = activePosition;
+        }
+
+        closeModal();
+        savePlayers();
+        renderApp();
+      };
+
+      // --- Render System ---
+      function renderApp() {
+        renderSquadList();
+        renderPitches();
+      }
+
+      function renderSquadList() {
+        squadListEl.innerHTML = "";
+        squadCountEl.textContent = players.length;
+
+        if (players.length === 0) {
+          squadListEl.innerHTML =
+            '<div style="text-align:center; color:var(--text-muted); padding:1.5rem 1rem; font-style:italic;">No players in squad.</div>';
+          return;
+        }
+
+        const sortedPlayers = [...players].sort((playerA, playerB) => {
+          if (squadSort.value === "minutes") {
+            return getPlayedMinutes(playerB) - getPlayedMinutes(playerA) ||
+              playerA.name.localeCompare(playerB.name);
+          }
+          return playerA.name.localeCompare(playerB.name);
+        });
+
+        sortedPlayers.forEach((p) => {
+          const item = document.createElement("div");
+          item.className = "squad-item";
+
+          let badgesHtml = "";
+          const totalMinutes = getPlayedMinutes(p);
+
+          for (let q = 1; q <= 4; q++) {
+            const h1 = p.assignments[q][1];
+            const h2 = p.assignments[q][2];
+
+            if (h1 && h1 === h2) {
+              badgesHtml += `<span class="pos-badge">Q${q}: ${h1}</span>`;
+            } else {
+              if (h1)
+                badgesHtml += `<span class="pos-badge">Q${q} (1st): ${h1}</span>`;
+              if (h2)
+                badgesHtml += `<span class="pos-badge pos-badge sub">Q${q} (2nd): ${h2}</span>`;
+            }
+          }
+
+          const timeBadgeClass =
+            totalMinutes > 0 ? "time-badge" : "time-badge zero";
+
+          item.innerHTML = `
+                    <div class="squad-item-info">
+                        <div class="squad-header">
+                            <span class="squad-name">${p.name}</span>
+                            <span class="${timeBadgeClass}">⏱ ${totalMinutes} Min</span>
+                        </div>
+                        <div class="badges-container">${badgesHtml}</div>
+                    </div>
+                    <button class="remove-btn" title="Delete Player" onclick="deletePlayer(${p.id})">×</button>
+                `;
+          squadListEl.appendChild(item);
+        });
+      }
+
+      function getPlayedMinutes(player) {
+        let halvesPlayed = 0;
+        for (let q = 1; q <= 4; q++) {
+          if (player.assignments[q][1]) halvesPlayed++;
+          if (player.assignments[q][2]) halvesPlayed++;
+        }
+        return halvesPlayed * MINUTES_PER_HALF;
+      }
+
+      function renderPitches() {
+        pitchesGridEl.innerHTML = "";
+
+        for (let q = 1; q <= 4; q++) {
+          const pitchContainer = document.createElement("div");
+          pitchContainer.className = "pitch-container";
+          pitchContainer.innerHTML = `<div class="pitch-title">Q${q}</div>`;
+
+          const pitch = document.createElement("div");
+          pitch.className = "pitch";
+          pitch.innerHTML = `
+                    <div class="halfway-line pitch-line"></div><div class="center-circle"></div>
+                    <div class="center-spot"></div><div class="penalty-box-top"></div><div class="penalty-box-bottom"></div>
+                `;
+
+          Object.keys(formationCoords).forEach((pos) => {
+            const p1 = players.find((p) => p.assignments[q][1] === pos);
+            const p2 = players.find((p) => p.assignments[q][2] === pos);
+            const coords = formationCoords[pos];
+
+            const node = document.createElement("div");
+            node.style.top = coords.top;
+            node.style.left = coords.left;
+
+            if (!p1 && !p2) {
+              // Empty Slot
+              node.className = "player-node empty";
+              node.innerHTML = `<div class="jersey ghost">${pos}</div>`;
+              node.onclick = () => openModal(q, pos);
+            } else {
+              // Assigned Slot (Full or Split)
+              node.className = "player-node";
+
+              let jerseyClass = "jersey full";
+              let nameLabel = "";
+
+              if (p1 && p2 && p1.id === p2.id) {
+                nameLabel = p1.name;
+              } else {
+                jerseyClass = "jersey split";
+                const name1 = p1 ? p1.name : "-";
+                const name2 = p2 ? p2.name : "-";
+                nameLabel = `${name1} 🔄 ${name2}`;
+              }
+
+              node.innerHTML = `
+                            <div class="${jerseyClass}">
+                                ${pos}
+                                <button class="unassign-btn" onclick="unassignPosition(${q}, '${pos}', event)">×</button>
+                            </div>
+                            <div class="player-name">${nameLabel}</div>
+                        `;
+              node.onclick = () => openModal(q, pos);
+            }
+            pitch.appendChild(node);
+          });
+
+          pitchContainer.appendChild(pitch);
+          pitchesGridEl.appendChild(pitchContainer);
+        }
+      }
+
+      renderApp();
+    </script>
+  </body>
+</html>
