@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ik Dien - Opstelling Planner</title>
+    <title>Ik Dien - Opstellingsplanner</title>
     <style>
       /* --- Color Palette & Variables --- */
       :root {
@@ -581,21 +581,21 @@
     <div class="container">
       <div class="panel">
         <h2>
-          Squad List
+          Spelerslijst
           <span id="squadCount" class="squad-count-badge">0</span>
         </h2>
         <div class="squad-sort">
-          <label for="squadSort">Sort squad</label>
+          <label for="squadSort">Sorteren op</label>
           <select id="squadSort">
-            <option value="name">Alphabetical (A-Z)</option>
-            <option value="minutes">Played minutes (most first)</option>
+            <option value="name">Alfabetisch (A-Z)</option>
+            <option value="minutes">Gespeelde minuten (meeste eerst)</option>
           </select>
         </div>
         <form id="addPlayerForm" class="form-group form-row">
           <input
             type="text"
             id="playerName"
-            placeholder="Add new player..."
+            placeholder="Nieuwe speler toevoegen..."
             autocomplete="off"
             required
           />
@@ -606,23 +606,23 @@
 
       <div class="panel">
         <div class="match-toolbar">
-          <select id="matchSelect" aria-label="Saved matches"></select>
+          <select id="matchSelect" aria-label="Opgeslagen wedstrijden"></select>
           <button type="button" class="btn btn-secondary" id="newMatchButton">
-            New Match
+            Nieuwe wedstrijd
           </button>
           <button type="button" class="btn" id="saveMatchButton">
-            Save Match
+            Wedstrijd opslaan
           </button>
           <button type="button" class="btn btn-secondary" id="deleteMatchButton">
-            Delete Match
+            Wedstrijd verwijderen
           </button>
         </div>
         <div class="form-group">
-          <label for="matchTitle">Match Title</label>
-          <input type="text" id="matchTitle" placeholder="Enter match title..." />
+          <label for="matchTitle">Wedstrijdnaam</label>
+          <input type="text" id="matchTitle" placeholder="Voer wedstrijdnaam in..." />
         </div>
         <div class="form-group">
-          <label for="matchDate">Match Date</label>
+          <label for="matchDate">Wedstrijddatum</label>
           <input type="date" id="matchDate" />
         </div>
         <div class="pitches-grid" id="pitchesGrid"></div>
@@ -633,27 +633,27 @@
       <div class="modal-content">
         <div class="modal-header">
           <h3 style="margin: 0; font-size: 1.1rem">
-            Assign <span id="modalPosName" style="color: var(--primary)"></span>
+            Positie <span id="modalPosName" style="color: var(--primary)"></span> toewijzen
             <small style="color: var(--text-muted); font-weight: normal"
-              >(Quarter <span id="modalQuarterName"></span>)</small
+              >(Q<span id="modalQuarterName"></span>)</small
             >
           </h3>
           <button class="close-modal" onclick="closeModal()">×</button>
         </div>
 
         <div class="form-group">
-          <label>First Half (0:00 - 7:30)</label>
+          <label>Eerste helft (0:00 - 7:30)</label>
           <select id="half1Select"></select>
         </div>
 
         <div style="text-align: center; margin: 10px 0">
           <button class="btn btn-secondary" onclick="copyHalf1ToHalf2()">
-            ↓ Play Full Quarter ↓
+            ↓ Volledig Qspelen ↓
           </button>
         </div>
 
         <div class="form-group">
-          <label>Second Half (7:30 - 15:00)</label>
+          <label>Tweede helft (7:30 - 15:00)</label>
           <select id="half2Select"></select>
         </div>
 
@@ -662,7 +662,7 @@
           style="width: 100%; margin-top: 1rem"
           onclick="saveAssignments()"
         >
-          Confirm Selection
+          Keuze bevestigen
         </button>
       </div>
     </div>
@@ -754,7 +754,7 @@
             return [
               {
                 id: Date.now(),
-                title: legacyDetails.title || "Untitled Match",
+                title: legacyDetails.title || "Naamloze wedstrijd",
                 date: legacyDetails.date || "",
                 players: legacyPlayers,
               },
@@ -787,7 +787,7 @@
       function renderMatchSelect() {
         matchSelect.innerHTML = "";
         if (matches.length === 0) {
-          matchSelect.innerHTML = '<option value="">No saved matches</option>';
+          matchSelect.innerHTML = '<option value="">Geen opgeslagen wedstrijden</option>';
           deleteMatchButton.disabled = true;
           return;
         }
@@ -795,7 +795,7 @@
         matches.forEach((match) => {
           const option = document.createElement("option");
           option.value = match.id;
-          option.textContent = `${match.title || "Untitled Match"}${match.date ? ` - ${match.date}` : ""}`;
+          option.textContent = `${match.title || "Naamloze wedstrijd"}${match.date ? ` - ${match.date}` : ""}`;
           matchSelect.appendChild(option);
         });
         matchSelect.value = currentMatchId;
@@ -805,7 +805,7 @@
       function saveCurrentMatch() {
         const match = {
           id: currentMatchId || Date.now(),
-          title: matchTitleInput.value.trim() || "Untitled Match",
+          title: matchTitleInput.value.trim() || "Naamloze wedstrijd",
           date: matchDateInput.value,
           players,
         };
@@ -913,8 +913,8 @@
         const h1Select = document.getElementById("half1Select");
         const h2Select = document.getElementById("half2Select");
 
-        h1Select.innerHTML = '<option value="">-- Empty (Sub Out) --</option>';
-        h2Select.innerHTML = '<option value="">-- Empty (Sub Out) --</option>';
+        h1Select.innerHTML = '<option value="">-- Leeg (Wissel) --</option>';
+        h2Select.innerHTML = '<option value="">-- Leeg (Wissel) --</option>';
 
         players.forEach((p) => {
           h1Select.innerHTML += `<option value="${p.id}">${p.name}</option>`;
@@ -979,7 +979,7 @@
 
         if (players.length === 0) {
           squadListEl.innerHTML =
-            '<div style="text-align:center; color:var(--text-muted); padding:1.5rem 1rem; font-style:italic;">No players in squad.</div>';
+            '<div style="text-align:center; color:var(--text-muted); padding:1.5rem 1rem; font-style:italic;">Geen spelers in de selectie.</div>';
           return;
         }
 
@@ -1006,9 +1006,9 @@
               badgesHtml += `<span class="pos-badge">Q${q}: ${h1}</span>`;
             } else {
               if (h1)
-                badgesHtml += `<span class="pos-badge">Q${q} (1st): ${h1}</span>`;
+                badgesHtml += `<span class="pos-badge">Q${q} (1e): ${h1}</span>`;
               if (h2)
-                badgesHtml += `<span class="pos-badge pos-badge sub">Q${q} (2nd): ${h2}</span>`;
+                badgesHtml += `<span class="pos-badge pos-badge sub">Q${q} (2e): ${h2}</span>`;
             }
           }
 
@@ -1019,11 +1019,11 @@
                     <div class="squad-item-info">
                         <div class="squad-header">
                             <span class="squad-name">${p.name}</span>
-                            <span class="${timeBadgeClass}">⏱ ${totalMinutes} Min</span>
+                            <span class="${timeBadgeClass}">⏱ ${totalMinutes} min</span>
                         </div>
                         <div class="badges-container">${badgesHtml}</div>
                     </div>
-                    <button class="remove-btn" title="Delete Player" onclick="deletePlayer(${p.id})">×</button>
+                    <button class="remove-btn" title="Speler verwijderen" onclick="deletePlayer(${p.id})">×</button>
                 `;
           squadListEl.appendChild(item);
         });
