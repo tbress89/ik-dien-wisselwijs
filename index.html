@@ -489,7 +489,7 @@
         position: relative;
         overflow: hidden;
       }
-      /* Highlighted target zone 30-45 min (50% to 75% of 60 min match) */
+      /* Highlighted target zone */
       .target-bar-zone {
         position: absolute;
         top: 0;
@@ -1562,17 +1562,14 @@
                 <option value="8v8_4x15">8 tegen 8 (4x15 min)</option>
                 <option value="8v8_4x20">8 tegen 8 (4x20 min)</option>
                 <option value="11v11_4x20">11 tegen 11 (4x20 min)</option>
+                <option value="11v11_2x45">11 tegen 11 (2x45 min)</option>
               </select>
             </div>
           </div>
 
           <!-- Mobile Quarter Switcher Tabs -->
           <div class="quarter-tabs" id="quarterTabs">
-            <button type="button" class="quarter-tab-btn" data-tab="all">Alles</button>
-            <button type="button" class="quarter-tab-btn active" data-tab="1">Q1</button>
-            <button type="button" class="quarter-tab-btn" data-tab="2">Q2</button>
-            <button type="button" class="quarter-tab-btn" data-tab="3">Q3</button>
-            <button type="button" class="quarter-tab-btn" data-tab="4">Q4</button>
+            <!-- Will be dynamically populated via JS -->
           </div>
 
           <div class="pitches-grid" id="pitchesGrid"></div>
@@ -1610,6 +1607,7 @@
               <option value="8v8_4x15">8 tegen 8 (4x15 min)</option>
               <option value="8v8_4x20">8 tegen 8 (4x20 min)</option>
               <option value="11v11_4x20">11 tegen 11 (4x20 min)</option>
+              <option value="11v11_2x45">11 tegen 11 (2x45 min)</option>
             </select>
           </div>
           <div id="inheritPlayersGroup" class="form-group" style="margin-top:0.25rem;">
@@ -1637,7 +1635,7 @@
           <h3>
             Positie <span id="modalPosName" style="color: var(--primary)"></span> toewijzen
             <small style="color: var(--text-muted); font-weight: normal"
-              >(Q<span id="modalQuarterName"></span>)</small
+              >(<span id="modalQuarterName"></span>)</small
             >
           </h3>
           <button class="close-modal" onclick="closeModal()">×</button>
@@ -1645,24 +1643,28 @@
 
         <label class="sub-toggle-box">
           <input type="checkbox" id="modalSubToggle" onchange="toggleSubMode()" />
-          <span id="modalSubToggleLabel" class="sub-toggle-label">Wissel halverwege het quarter (na 7,5 min)</span>
+          <span id="modalSubToggleLabel" class="sub-toggle-label">Wissel toevoegen</span>
         </label>
 
-        <!-- Single Player Selector (Full Quarter) -->
+        <!-- Single Player Selector (Full Quarter/Half) -->
         <div id="fullQuarterGroup" class="form-group">
           <label id="fullQuarterLabel" for="fullQuarterSelect">Speler (volledig quarter)</label>
           <select id="fullQuarterSelect"></select>
         </div>
 
-        <!-- Split Player Selector (1st & 2nd Half) -->
+        <!-- Split Player Selector (Dynamically handles 2 or 3 segments) -->
         <div id="splitQuarterGroup" style="display: none;">
-          <div class="form-group">
-            <label id="half1Label" for="half1Select">Eerste helft (0:00 - 7:30)</label>
-            <select id="half1Select"></select>
+          <div class="form-group" id="part1Group">
+            <label id="part1Label" for="part1Select">Deel 1</label>
+            <select id="part1Select"></select>
           </div>
-          <div class="form-group">
-            <label id="half2Label" for="half2Select">Tweede helft (7:30 - 15:00)</label>
-            <select id="half2Select"></select>
+          <div class="form-group" id="part2Group">
+            <label id="part2Label" for="part2Select">Deel 2</label>
+            <select id="part2Select"></select>
+          </div>
+          <div class="form-group" id="part3Group">
+            <label id="part3Label" for="part3Select">Deel 3</label>
+            <select id="part3Select"></select>
           </div>
         </div>
 
@@ -1703,7 +1705,8 @@
           teamSize: 8,
           quarters: 4,
           quarterMinutes: 15,
-          halfMinutes: 7.5,
+          segments: 2,
+          segmentMinutes: 7.5,
           totalMinutes: 60,
           subTimeLabel: "7'30",
           targetMin: 30,
@@ -1726,7 +1729,8 @@
           teamSize: 8,
           quarters: 4,
           quarterMinutes: 20,
-          halfMinutes: 10,
+          segments: 2,
+          segmentMinutes: 10,
           totalMinutes: 80,
           subTimeLabel: "10'00",
           targetMin: 40,
@@ -1749,7 +1753,8 @@
           teamSize: 5,
           quarters: 4,
           quarterMinutes: 15,
-          halfMinutes: 7.5,
+          segments: 2,
+          segmentMinutes: 7.5,
           totalMinutes: 60,
           subTimeLabel: "7'30",
           targetMin: 35,
@@ -1769,11 +1774,39 @@
           teamSize: 11,
           quarters: 4,
           quarterMinutes: 20,
-          halfMinutes: 10,
+          segments: 2,
+          segmentMinutes: 10,
           totalMinutes: 80,
           subTimeLabel: "10'00",
-          targetMin: 40, // Adjusted for a typical 11v11 squad size
+          targetMin: 40,
           targetMax: 80,
+          formation: {
+            "9": { top: "18%", left: "50%", label: "Spits" },
+            "11": { top: "25%", left: "20%", label: "Linksbuiten" },
+            "7": { top: "25%", left: "80%", label: "Rechtsbuiten" },
+            "8": { top: "55%", left: "30%", label: "Box-to-box middenvelder" },
+            "10": { top: "40%", left: "50%", label: "Spelmaker" },
+            "6": { top: "55%", left: "70%", label: "Defensieve middenvelder" },
+            "3": { top: "72%", left: "15%", label: "Linksachter" },
+            "4": { top: "78%", left: "35%", label: "Centrale verdediger (L)" },
+            "5": { top: "78%", left: "65%", label: "Centrale verdediger (R)" },
+            "2": { top: "72%", left: "85%", label: "Rechtsachter" },
+            GK: { top: "92%", left: "50%", label: "Doelman" },
+          },
+        },
+        "11v11_2x45": {
+          id: "11v11_2x45",
+          name: "11 tegen 11 (2x45 min)",
+          shortLabel: "11v11 • 2x45m",
+          teamSize: 11,
+          quarters: 2,
+          quarterMinutes: 45,
+          segments: 3,
+          segmentMinutes: 15,
+          totalMinutes: 90,
+          subTimeLabel: "15' / 30'",
+          targetMin: 45, 
+          targetMax: 90,
           formation: {
             "9": { top: "18%", left: "50%", label: "Spits" },
             "11": { top: "25%", left: "20%", label: "Linksbuiten" },
@@ -1820,7 +1853,18 @@
       const pitchesGridEl = document.getElementById("pitchesGrid");
       const squadCountEl = document.getElementById("squadCount");
       const attendanceSummaryEl = document.getElementById("attendanceSummary");
+      
+      // Assign Modal
       const assignModal = document.getElementById("assignModal");
+      const modalSubToggle = document.getElementById("modalSubToggle");
+      const fullQuarterGroup = document.getElementById("fullQuarterGroup");
+      const splitQuarterGroup = document.getElementById("splitQuarterGroup");
+      const fullQuarterSelect = document.getElementById("fullQuarterSelect");
+      const part1Select = document.getElementById("part1Select");
+      const part2Select = document.getElementById("part2Select");
+      const part3Select = document.getElementById("part3Select");
+      const part3Group = document.getElementById("part3Group");
+
       const squadSort = document.getElementById("squadSort");
       const matchSelect = document.getElementById("matchSelect");
       const newMatchButton = document.getElementById("newMatchButton");
@@ -1846,6 +1890,12 @@
               if (Array.isArray(m.players)) {
                 m.players.forEach((p) => {
                   if (p.present === undefined) p.present = true;
+                  // Zorg ervoor dat het datamodel correct geformatteerd is voor segment 3 (migratie)
+                  for (let q = 1; q <= 4; q++) {
+                     if (p.assignments && p.assignments[q] && p.assignments[q][3] === undefined) {
+                         p.assignments[q][3] = null;
+                     }
+                  }
                 });
               }
             });
@@ -1856,6 +1906,11 @@
           const legacyPlayers = loadLegacyPlayers();
           const legacyDetails = loadLegacyMatchDetails();
           if (legacyPlayers.length > 0 || legacyDetails.title || legacyDetails.date) {
+            legacyPlayers.forEach(p => {
+               for(let q=1; q<=4; q++) {
+                 if (p.assignments && p.assignments[q] && p.assignments[q][3] === undefined) p.assignments[q][3] = null;
+               }
+            });
             return [
               {
                 id: Date.now(),
@@ -2149,10 +2204,10 @@
             name: p.name,
             present: true,
             assignments: {
-              1: { 1: null, 2: null },
-              2: { 1: null, 2: null },
-              3: { 1: null, 2: null },
-              4: { 1: null, 2: null },
+              1: { 1: null, 2: null, 3: null },
+              2: { 1: null, 2: null, 3: null },
+              3: { 1: null, 2: null, 3: null },
+              4: { 1: null, 2: null, 3: null },
             },
           }));
         }
@@ -2274,6 +2329,7 @@
 
       function updateMobileTabVisibility() {
         const containers = document.querySelectorAll(".pitch-container");
+        
         containers.forEach((container) => {
           const q = container.dataset.quarter;
           if (activeMobileTab === "all" || activeMobileTab === q) {
@@ -2329,10 +2385,10 @@
           name: name,
           present: true,
           assignments: {
-            1: { 1: null, 2: null },
-            2: { 1: null, 2: null },
-            3: { 1: null, 2: null },
-            4: { 1: null, 2: null },
+            1: { 1: null, 2: null, 3: null },
+            2: { 1: null, 2: null, 3: null },
+            3: { 1: null, 2: null, 3: null },
+            4: { 1: null, 2: null, 3: null },
           },
         });
 
@@ -2360,9 +2416,11 @@
         p.present = !p.present;
 
         if (!p.present) {
-          for (let q = 1; q <= 4; q++) {
-            p.assignments[q][1] = null;
-            p.assignments[q][2] = null;
+          const currentFormat = getCurrentFormat();
+          for (let q = 1; q <= currentFormat.quarters; q++) {
+            for (let i = 1; i <= currentFormat.segments; i++) {
+               p.assignments[q][i] = null;
+            }
           }
         }
 
@@ -2371,18 +2429,20 @@
       };
 
 
-
-      // --- Quarter Cloning (Step 1) ---
+      // --- Quarter Cloning ---
       window.cloneQuarter = function (targetQuarter) {
         const sourceQuarter = targetQuarter - 1;
         if (sourceQuarter < 1) return;
 
+        const currentFormat = getCurrentFormat();
+        const periodPrefix = currentFormat.quarters === 2 ? "H" : "Q";
+
         const hasSourceAssignments = players.some(
-          (p) => p.assignments[sourceQuarter][1] || p.assignments[sourceQuarter][2]
+          (p) => isPlayerAssignedInQuarter(p, sourceQuarter)
         );
 
         if (!hasSourceAssignments) {
-          alert(`Quarter ${sourceQuarter} is nog leeg. Wijs eerst spelers toe in Q${sourceQuarter}.`);
+          alert(`Periode ${periodPrefix}${sourceQuarter} is nog leeg. Wijs eerst spelers toe in ${periodPrefix}${sourceQuarter}.`);
           return;
         }
 
@@ -2390,83 +2450,104 @@
           if (p.present !== false) {
             p.assignments[targetQuarter][1] = p.assignments[sourceQuarter][1];
             p.assignments[targetQuarter][2] = p.assignments[sourceQuarter][2];
+            p.assignments[targetQuarter][3] = p.assignments[sourceQuarter][3];
           } else {
             p.assignments[targetQuarter][1] = null;
             p.assignments[targetQuarter][2] = null;
+            p.assignments[targetQuarter][3] = null;
           }
         });
 
         syncCurrentMatchState();
         renderApp();
-        showToast(`Opstelling van Q${sourceQuarter} gekopieerd naar Q${targetQuarter}!`);
+        showToast(`Opstelling van ${periodPrefix}${sourceQuarter} gekopieerd naar ${periodPrefix}${targetQuarter}!`);
       };
 
-      // --- Streamlined & Smart Modal System (Step 2) ---
-      const modalSubToggle = document.getElementById("modalSubToggle");
-      const fullQuarterGroup = document.getElementById("fullQuarterGroup");
-      const splitQuarterGroup = document.getElementById("splitQuarterGroup");
-      const fullQuarterSelect = document.getElementById("fullQuarterSelect");
-      const half1Select = document.getElementById("half1Select");
-      const half2Select = document.getElementById("half2Select");
 
+      // --- Streamlined & Smart Modal System ---
       window.openModal = function (quarter, pos) {
         activePosition = pos;
         activeQuarter = quarter;
         const currentFormat = getCurrentFormat();
+        
+        const isHalves = currentFormat.quarters === 2;
+        const periodPrefix = isHalves ? "H" : "Q";
+        const periodName = isHalves ? "de helft" : "het quarter";
+        const fullPeriodName = isHalves ? "volledige helft" : "volledig quarter";
+
         document.getElementById("modalPosName").textContent = pos;
-        document.getElementById("modalQuarterName").textContent = quarter;
+        document.getElementById("modalQuarterName").textContent = periodPrefix + quarter;
 
         // Dynamic labels for current format
         const subToggleLabel = document.getElementById("modalSubToggleLabel");
         const fullQuarterLabel = document.getElementById("fullQuarterLabel");
-        const half1Label = document.getElementById("half1Label");
-        const half2Label = document.getElementById("half2Label");
 
         if (subToggleLabel) {
-          subToggleLabel.textContent = `Wissel halverwege het quarter (na ${currentFormat.subTimeLabel} min)`;
+          if(currentFormat.segments === 3) {
+             subToggleLabel.textContent = `Wissel inplannen (na 15 of 30 min)`;
+          } else {
+             subToggleLabel.textContent = `Wissel halverwege ${periodName} (na ${currentFormat.subTimeLabel} min)`;
+          }
         }
         if (fullQuarterLabel) {
-          fullQuarterLabel.textContent = `Speler (volledig quarter: ${currentFormat.quarterMinutes} min)`;
+          fullQuarterLabel.textContent = `Speler (${fullPeriodName}: ${currentFormat.quarterMinutes} min)`;
         }
-        if (half1Label) {
-          half1Label.textContent = `Eerste helft (0:00 - ${currentFormat.subTimeLabel})`;
-        }
-        if (half2Label) {
-          half2Label.textContent = `Tweede helft (${currentFormat.subTimeLabel} - ${currentFormat.quarterMinutes}:00)`;
+        
+        document.getElementById("part1Label").textContent = `Deel 1 (0:00 - ${currentFormat.segmentMinutes}:00)`;
+        document.getElementById("part2Label").textContent = `Deel 2 (${currentFormat.segmentMinutes}:00 - ${currentFormat.segmentMinutes*2}:00)`;
+        
+        if(currentFormat.segments === 3) {
+            part3Group.style.display = "flex";
+            document.getElementById("part3Label").textContent = `Deel 3 (${currentFormat.segmentMinutes*2}:00 - ${currentFormat.segmentMinutes*3}:00)`;
+        } else {
+            part3Group.style.display = "none";
         }
 
         const p1 = players.find((p) => p.assignments[quarter][1] === pos);
         const p2 = players.find((p) => p.assignments[quarter][2] === pos);
+        const p3 = currentFormat.segments === 3 ? players.find((p) => p.assignments[quarter][3] === pos) : null;
 
-        const isSplit = p1 && p2 && p1.id !== p2.id;
+        let isSplit = false;
+        if (currentFormat.segments === 3) {
+            isSplit = (p1 && p2 && p1.id !== p2.id) || (p1 && p3 && p1.id !== p3.id) || (p2 && p3 && p2.id !== p3.id);
+        } else {
+            isSplit = p1 && p2 && p1.id !== p2.id;
+        }
+
         modalSubToggle.checked = isSplit;
+        
+        // This will sync display block/none
         toggleSubMode();
-
-        populateSmartOptions(quarter, pos, p1 ? p1.id : null, p2 ? p2.id : null);
+        populateSmartOptions(quarter, pos, p1 ? p1.id : null, p2 ? p2.id : null, p3 ? p3.id : null);
 
         assignModal.classList.add("active");
       };
 
-      function toggleSubMode() {
+      window.toggleSubMode = function () {
         const isSplit = modalSubToggle.checked;
+        const currentFormat = getCurrentFormat();
+        
         if (isSplit) {
           fullQuarterGroup.style.display = "none";
           splitQuarterGroup.style.display = "block";
           if (fullQuarterSelect.value) {
-            half1Select.value = fullQuarterSelect.value;
-            half2Select.value = fullQuarterSelect.value;
+            part1Select.value = fullQuarterSelect.value;
+            part2Select.value = fullQuarterSelect.value;
+            if(currentFormat.segments === 3) part3Select.value = fullQuarterSelect.value;
           }
         } else {
           fullQuarterGroup.style.display = "block";
           splitQuarterGroup.style.display = "none";
-          if (half1Select.value) {
-            fullQuarterSelect.value = half1Select.value;
+          if (part1Select.value) {
+            fullQuarterSelect.value = part1Select.value;
           }
         }
       }
 
-      function populateSmartOptions(quarter, currentPos, currentH1Id, currentH2Id) {
-        const selects = [fullQuarterSelect, half1Select, half2Select];
+      function populateSmartOptions(quarter, currentPos, currentH1Id, currentH2Id, currentP3Id) {
+        const selects = [fullQuarterSelect, part1Select, part2Select, part3Select];
+        const currentFormat = getCurrentFormat();
+
         selects.forEach((sel) => (sel.innerHTML = '<option value="">-- Leeg (Wissel) --</option>'));
 
         const presentPlayers = players.filter((p) => p.present !== false);
@@ -2497,30 +2578,39 @@
           });
         });
 
-        if (currentH1Id) half1Select.value = currentH1Id;
-        if (currentH2Id) half2Select.value = currentH2Id;
-        if (currentH1Id && currentH2Id && currentH1Id === currentH2Id) {
-          fullQuarterSelect.value = currentH1Id;
-        } else if (currentH1Id) {
-          fullQuarterSelect.value = currentH1Id;
-        } else if (currentH2Id) {
-          fullQuarterSelect.value = currentH2Id;
+        if (currentH1Id) part1Select.value = currentH1Id;
+        if (currentH2Id) part2Select.value = currentH2Id;
+        if (currentP3Id) part3Select.value = currentP3Id;
+
+        if (currentFormat.segments === 3) {
+             if (currentH1Id && currentH2Id && currentP3Id && currentH1Id === currentH2Id && currentH2Id === currentP3Id) {
+                  fullQuarterSelect.value = currentH1Id;
+             } else if (currentH1Id) fullQuarterSelect.value = currentH1Id;
+               else if (currentH2Id) fullQuarterSelect.value = currentH2Id;
+               else if (currentP3Id) fullQuarterSelect.value = currentP3Id;
+        } else {
+             if (currentH1Id && currentH2Id && currentH1Id === currentH2Id) {
+                  fullQuarterSelect.value = currentH1Id;
+             } else if (currentH1Id) fullQuarterSelect.value = currentH1Id;
+               else if (currentH2Id) fullQuarterSelect.value = currentH2Id;
         }
       }
 
       function isPlayerAssignedInQuarter(player, quarter, ignorePos) {
-        const h1 = player.assignments[quarter][1];
-        const h2 = player.assignments[quarter][2];
-        const assignedH1 = h1 && h1 !== ignorePos;
-        const assignedH2 = h2 && h2 !== ignorePos;
-        return assignedH1 || assignedH2;
+        const fmt = getCurrentFormat();
+        for(let i=1; i<=fmt.segments; i++) {
+           const pos = player.assignments[quarter][i];
+           if (pos && pos !== ignorePos) return true;
+        }
+        return false;
       }
 
       function getPlayerOtherAssignmentInQuarter(player, quarter, ignorePos) {
-        const h1 = player.assignments[quarter][1];
-        const h2 = player.assignments[quarter][2];
-        if (h1 && h1 !== ignorePos) return h1;
-        if (h2 && h2 !== ignorePos) return h2;
+        const fmt = getCurrentFormat();
+        for(let i=1; i<=fmt.segments; i++) {
+           const pos = player.assignments[quarter][i];
+           if (pos && pos !== ignorePos) return pos;
+        }
         return null;
       }
 
@@ -2532,13 +2622,11 @@
         if (e.target === assignModal) closeModal();
       });
 
-
       window.clearActivePosition = function () {
         players.forEach((p) => {
-          if (p.assignments[activeQuarter][1] === activePosition)
-            p.assignments[activeQuarter][1] = null;
-          if (p.assignments[activeQuarter][2] === activePosition)
-            p.assignments[activeQuarter][2] = null;
+          if (p.assignments[activeQuarter][1] === activePosition) p.assignments[activeQuarter][1] = null;
+          if (p.assignments[activeQuarter][2] === activePosition) p.assignments[activeQuarter][2] = null;
+          if (p.assignments[activeQuarter][3] === activePosition) p.assignments[activeQuarter][3] = null;
         });
         closeModal();
         syncCurrentMatchState();
@@ -2546,32 +2634,37 @@
       };
 
       window.saveAssignments = function () {
-        let h1Id = null;
-        let h2Id = null;
+        const currentFormat = getCurrentFormat();
+        let s1 = null, s2 = null, s3 = null;
 
         if (modalSubToggle.checked) {
-          h1Id = Number(half1Select.value) || null;
-          h2Id = Number(half2Select.value) || null;
+          s1 = Number(part1Select.value) || null;
+          s2 = Number(part2Select.value) || null;
+          if (currentFormat.segments === 3) s3 = Number(part3Select.value) || null;
         } else {
           const singleId = Number(fullQuarterSelect.value) || null;
-          h1Id = singleId;
-          h2Id = singleId;
+          s1 = singleId;
+          s2 = singleId;
+          if (currentFormat.segments === 3) s3 = singleId;
         }
 
         players.forEach((p) => {
-          if (p.assignments[activeQuarter][1] === activePosition)
-            p.assignments[activeQuarter][1] = null;
-          if (p.assignments[activeQuarter][2] === activePosition)
-            p.assignments[activeQuarter][2] = null;
+          if (p.assignments[activeQuarter][1] === activePosition) p.assignments[activeQuarter][1] = null;
+          if (p.assignments[activeQuarter][2] === activePosition) p.assignments[activeQuarter][2] = null;
+          if (p.assignments[activeQuarter][3] === activePosition) p.assignments[activeQuarter][3] = null;
         });
 
-        if (h1Id) {
-          const p1 = players.find((p) => p.id === h1Id);
-          if (p1) p1.assignments[activeQuarter][1] = activePosition;
+        if (s1) {
+          const p = players.find((pl) => pl.id === s1);
+          if (p) p.assignments[activeQuarter][1] = activePosition;
         }
-        if (h2Id) {
-          const p2 = players.find((p) => p.id === h2Id);
-          if (p2) p2.assignments[activeQuarter][2] = activePosition;
+        if (s2) {
+          const p = players.find((pl) => pl.id === s2);
+          if (p) p.assignments[activeQuarter][2] = activePosition;
+        }
+        if (s3 && currentFormat.segments === 3) {
+          const p = players.find((pl) => pl.id === s3);
+          if (p) p.assignments[activeQuarter][3] = activePosition;
         }
 
         closeModal();
@@ -2584,6 +2677,7 @@
         players.forEach((p) => {
           if (p.assignments[quarter][1] === pos) p.assignments[quarter][1] = null;
           if (p.assignments[quarter][2] === pos) p.assignments[quarter][2] = null;
+          if (p.assignments[quarter][3] === pos) p.assignments[quarter][3] = null;
         });
         syncCurrentMatchState();
         renderApp();
@@ -2591,18 +2685,38 @@
 
       function getPlayedMinutes(player) {
         const fmt = getCurrentFormat();
-        let halvesPlayed = 0;
-        for (let q = 1; q <= 4; q++) {
-          if (player.assignments[q][1]) halvesPlayed++;
-          if (player.assignments[q][2]) halvesPlayed++;
+        let segmentsPlayed = 0;
+        // Only loop through valid periods and segments for the current format
+        for (let q = 1; q <= fmt.quarters; q++) {
+          if (player.assignments[q][1]) segmentsPlayed++;
+          if (player.assignments[q][2]) segmentsPlayed++;
+          if (fmt.segments === 3 && player.assignments[q][3]) segmentsPlayed++;
         }
-        return halvesPlayed * fmt.halfMinutes;
+        return segmentsPlayed * fmt.segmentMinutes;
       }
 
       // --- Render System ---
       function renderApp() {
+        renderTabs();
         renderSquadList();
         renderPitches();
+      }
+
+      function renderTabs() {
+        const currentFormat = getCurrentFormat();
+        const numPeriods = currentFormat.quarters;
+        const prefix = numPeriods === 2 ? "H" : "Q";
+
+        // Reset tab to "all" if user changes format to fewer quarters while on a now hidden tab
+        if (activeMobileTab !== "all" && parseInt(activeMobileTab) > numPeriods) {
+          activeMobileTab = "all";
+        }
+
+        let tabsHtml = `<button type="button" class="quarter-tab-btn ${activeMobileTab === 'all' ? 'active' : ''}" data-tab="all">Alles</button>`;
+        for (let i = 1; i <= numPeriods; i++) {
+          tabsHtml += `<button type="button" class="quarter-tab-btn ${activeMobileTab === String(i) ? 'active' : ''}" data-tab="${i}">${prefix}${i}</button>`;
+        }
+        quarterTabsEl.innerHTML = tabsHtml;
       }
 
       function renderSquadList() {
@@ -2697,7 +2811,7 @@
               ${isPresent ? `
               <div class="target-bar-container" title="${targetTooltip}">
                 <div class="target-bar-track">
-                  <div class="target-bar-zone" style="left:${zoneLeft}%; width:${zoneWidth}%;" title="Doelzone: ${targetMin}–${targetMax} min"></div>
+                  <div class="target-bar-zone" style="left:${zoneLeft}\%; width:${zoneWidth}%;" title="Doelzone: ${targetMin}–${targetMax} min"></div>
                   <div class="target-bar-fill ${statusClass}" style="width: ${fillPercent}%;"></div>
                 </div>
               </div>` : ""}
@@ -2712,13 +2826,15 @@
         pitchesGridEl.innerHTML = "";
         const presentPlayers = players.filter((p) => p.present !== false);
         const currentFormat = getCurrentFormat();
+        const numPeriods = currentFormat.quarters;
+        const prefix = numPeriods === 2 ? "H" : "Q";
 
-        for (let q = 1; q <= 4; q++) {
+        for (let q = 1; q <= numPeriods; q++) {
           const pitchContainer = document.createElement("div");
           pitchContainer.className = "pitch-container";
           pitchContainer.dataset.quarter = q;
 
-          // Copy button for Q2, Q3, Q4
+          // Copy button for periods > 1
           let copyBtnHtml = "";
           if (q > 1) {
             copyBtnHtml = `
@@ -2726,16 +2842,16 @@
                 type="button" 
                 class="btn-copy-quarter" 
                 onclick="cloneQuarter(${q})"
-                title="Kopieer alle posities van Q${q - 1} naar Q${q}"
+                title="Kopieer alle posities van ${prefix}${q - 1} naar ${prefix}${q}"
               >
-                📋 Kopieer Q${q - 1}
+                📋 Kopieer ${prefix}${q - 1}
               </button>
             `;
           }
 
           pitchContainer.innerHTML = `
             <div class="pitch-header">
-              <div class="pitch-title">Q${q}</div>
+              <div class="pitch-title">${prefix}${q}</div>
               ${copyBtnHtml}
             </div>
           `;
@@ -2750,47 +2866,56 @@
             <div class="penalty-box-bottom"></div>
           `;
 
-          const fieldedPlayerIds = new Set();
-          const halfFieldedPlayerIds = new Set();
-
           Object.keys(currentFormat.formation).forEach((pos) => {
             const p1 = players.find((p) => p.assignments[q][1] === pos);
             const p2 = players.find((p) => p.assignments[q][2] === pos);
+            const p3 = currentFormat.segments === 3 ? players.find((p) => p.assignments[q][3] === pos) : null;
             const coords = currentFormat.formation[pos];
 
-            if (p1) fieldedPlayerIds.add(p1.id);
-            if (p2) fieldedPlayerIds.add(p2.id);
-            if ((p1 && !p2) || (!p1 && p2) || (p1 && p2 && p1.id !== p2.id)) {
-              if (p1) halfFieldedPlayerIds.add(p1.id);
-              if (p2) halfFieldedPlayerIds.add(p2.id);
-            }
+            let assignments = [p1, p2];
+            if (currentFormat.segments === 3) assignments.push(p3);
 
             const node = document.createElement("div");
             node.className = "player-node";
             node.style.top = coords.top;
             node.style.left = coords.left;
 
-            if (!p1 && !p2) {
+            const hasAny = assignments.some(p => p !== null && p !== undefined);
+
+            if (!hasAny) {
               node.classList.add("empty");
               node.innerHTML = `<div class="jersey ghost">${pos}</div>`;
               node.onclick = () => openModal(q, pos);
             } else {
-              let jerseyClass = "jersey full";
+              let blocks = [];
+              // Cluster consecutive segments into visual blocks
+              assignments.forEach((p, index) => {
+                  let playerObj = p ? p : {id: null, name: '-'};
+                  if (blocks.length > 0 && blocks[blocks.length - 1].id === playerObj.id) {
+                      blocks[blocks.length - 1].end = (index + 1) * currentFormat.segmentMinutes;
+                  } else {
+                      blocks.push({
+                          id: playerObj.id,
+                          name: playerObj.name,
+                          start: index * currentFormat.segmentMinutes,
+                          end: (index + 1) * currentFormat.segmentMinutes
+                      });
+                  }
+              });
+
+              let jerseyClass = blocks.length === 1 ? "jersey full" : "jersey split";
               let nameHtml = "";
 
-              if (p1 && p2 && p1.id === p2.id) {
-                nameHtml = `<div class="player-name" title="${p1.name}">${p1.name}</div>`;
+              if (blocks.length === 1) {
+                nameHtml = `<div class="player-name" title="${blocks[0].name}">${blocks[0].name}</div>`;
               } else {
-                jerseyClass = "jersey split";
-                const name1 = p1 ? p1.name : "-";
-                const name2 = p2 ? p2.name : "-";
-                const fullTitle = `${name1} (1e helft) 🔄 ${name2} (2e helft)`;
-                nameHtml = `
-                  <div class="player-name split" title="${fullTitle}">
-                    <div class="sub-name">${name1}</div>
-                    <div class="sub-name"><span class="sub-arrow">🔄</span>${name2}</div>
-                  </div>
-                `;
+                let fullTitle = blocks.map(b => `${b.name} (${b.start}'-${b.end}')`).join(' 🔄 ');
+                nameHtml = `<div class="player-name split" title="${fullTitle}">`;
+                blocks.forEach((b, i) => {
+                    let arrow = i === 0 ? '' : '<span class="sub-arrow">🔄</span>';
+                    nameHtml += `<div class="sub-name">${arrow}${b.name}</div>`;
+                });
+                nameHtml += `</div>`;
               }
 
               node.innerHTML = `
@@ -2807,7 +2932,7 @@
 
           pitchContainer.appendChild(pitch);
 
-          // --- Wisselbank (Bench) per Quarter (Step 2) ---
+          // --- Wisselbank (Bench) per Quarter ---
           const benchContainer = document.createElement("div");
           benchContainer.className = "bench-container";
 
@@ -2816,20 +2941,30 @@
 
           let benchCount = 0;
           presentPlayers.forEach((p) => {
-            const h1 = p.assignments[q][1];
-            const h2 = p.assignments[q][2];
-
-            // Only show players who actually start this quarter on the bench (!h1)
-            if (!h1) {
+            const a = p.assignments[q];
+            
+            // Player is on bench if they don't start the period in segment 1
+            if (!a[1]) {
+              let playsLater = false;
+              let firstSegmentIn = null;
+              
+              if (a[2]) { 
+                playsLater = true; 
+                firstSegmentIn = 2; 
+              } else if (currentFormat.segments === 3 && a[3]) { 
+                playsLater = true; 
+                firstSegmentIn = 3; 
+              }
+              
               benchCount++;
               const chip = document.createElement("span");
-
-              if (!h2) {
-                chip.className = "bench-chip full-bench";
-                chip.textContent = p.name;
+              if (!playsLater) {
+                 chip.className = "bench-chip full-bench";
+                 chip.textContent = p.name;
               } else {
-                chip.className = "bench-chip partial-bench";
-                chip.innerHTML = `${p.name} <span class="bench-sub-note">(valt in na ${currentFormat.subTimeLabel})</span>`;
+                 const timeIn = (firstSegmentIn - 1) * currentFormat.segmentMinutes;
+                 chip.className = "bench-chip partial-bench";
+                 chip.innerHTML = `${p.name} <span class="bench-sub-note">(valt in na ${timeIn}')</span>`;
               }
               benchList.appendChild(chip);
             }
@@ -2842,7 +2977,7 @@
           `;
 
           if (benchCount === 0) {
-            benchList.innerHTML = '<span class="bench-empty">Geen wissels bij start quarter.</span>';
+            benchList.innerHTML = '<span class="bench-empty">Geen wissels bij start.</span>';
           }
           benchContainer.appendChild(benchList);
           pitchContainer.appendChild(benchContainer);
