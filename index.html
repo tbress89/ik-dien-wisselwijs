@@ -103,13 +103,6 @@
         line-height: 1.15;
       }
 
-      .app-subtitle {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        font-weight: 500;
-        letter-spacing: 0.3px;
-      }
-
       .header-actions {
         display: flex;
         align-items: center;
@@ -179,12 +172,12 @@
 
       .match-meta-grid {
         display: grid;
-        grid-template-columns: 2fr 1fr;
+        grid-template-columns: 2fr 1fr 1.3fr;
         gap: 0.75rem;
         margin-bottom: 1rem;
       }
 
-      @media (max-width: 600px) {
+      @media (max-width: 800px) {
         .match-meta-grid {
           grid-template-columns: 1fr;
         }
@@ -265,16 +258,6 @@
         background: var(--primary-light);
         border-color: var(--primary);
         color: var(--primary);
-      }
-      button.btn-whatsapp {
-        background: #128C7E;
-        border-color: #128C7E;
-        color: #FFFFFF;
-      }
-      button.btn-whatsapp:hover {
-        background: #075E54;
-        border-color: #075E54;
-        box-shadow: 0 4px 10px rgba(18, 140, 126, 0.3);
       }
       #deleteMatchButton:hover {
         background: var(--danger-bg);
@@ -800,9 +783,9 @@
         color: #ffffff;
         border: 2px solid #ffffff;
         border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        font-size: 11px;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
         font-weight: bold;
         cursor: pointer;
         align-items: center;
@@ -811,6 +794,12 @@
       }
       .player-node:hover .unassign-btn {
         display: flex;
+      }
+      @media (hover: none) {
+        .player-node:not(.empty) .unassign-btn {
+          display: flex;
+          opacity: 0.88;
+        }
       }
 
       /* --- Wisselbank (Bench) per Quarter --- */
@@ -980,123 +969,199 @@
         transform: translateY(0);
       }
 
-      /* --- Print Stylesheet for Dugout Match Sheet --- */
-      @media print {
-        @page {
-          size: landscape;
-          margin: 8mm;
-        }
+      /* --- Collapsible Squad Header Button --- */
+      .squad-toggle-btn {
+        display: none;
+        background: var(--primary-light);
+        border: 1px solid var(--primary-tint);
+        color: var(--primary);
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        transition: transform 0.25s ease, background 0.2s;
+      }
+      .squad-toggle-btn:hover {
+        background: var(--primary-tint);
+      }
 
+      .mobile-sticky-bar {
+        display: none;
+      }
+
+      /* --- Mobile Responsive Enhancements (<= 640px) --- */
+      @media (max-width: 640px) {
         body {
-          background: #ffffff !important;
-          color: #000000 !important;
-          padding: 0 !important;
-        }
-
-        .match-toolbar,
-        .squad-form-row,
-        .squad-actions-row,
-        .remove-btn,
-        .attendance-btn,
-        .btn-copy-quarter,
-        .unassign-btn,
-        .modal-overlay,
-        .quarter-tabs,
-        .autosave-badge,
-        .header-actions,
-        #playerName,
-        .match-meta-grid input {
-          display: none !important;
+          padding: 0.65rem 0.5rem 5.5rem;
         }
 
         .container {
-          display: block !important;
-          max-width: 100% !important;
+          gap: 0.85rem;
+        }
+
+        .app-header {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.5rem;
+          margin-bottom: 0.25rem;
+        }
+
+        .app-header-title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        h1 {
+          font-size: 1.25rem;
+          letter-spacing: 1px;
+        }
+
+        .header-actions {
+          justify-content: flex-end;
         }
 
         .panel {
-          border: none !important;
-          box-shadow: none !important;
-          padding: 0 !important;
-          margin-bottom: 12px;
+          padding: 0.85rem 0.75rem;
+          border-radius: 12px;
         }
 
-        .panel:first-child {
-          display: none; /* Hide squad editor panel on print */
+        /* Collapsible Squad Panel */
+        .squad-panel h2 {
+          cursor: pointer;
+          user-select: none;
+          padding-bottom: 0.5rem;
+          margin-bottom: 0.5rem;
         }
 
-        .print-header {
-          display: block !important;
-          border-bottom: 2px solid #333;
-          padding-bottom: 6px;
-          margin-bottom: 12px;
+        .squad-toggle-btn {
+          display: inline-flex;
         }
 
+        .squad-panel-body {
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.35s ease-out;
+        }
+
+        .squad-panel-body.expanded {
+          max-height: 1800px;
+          transition: max-height 0.45s ease-in;
+        }
+
+        .squad-toggle-btn.expanded #squadToggleIcon {
+          display: inline-block;
+          transform: rotate(180deg);
+        }
+
+        .squad-list {
+          max-height: 380px;
+        }
+
+        .squad-item {
+          padding: 0.5rem 0.6rem;
+        }
+
+        .squad-name {
+          font-size: 0.86rem;
+        }
+
+        /* Tactical Pitches & Nodes */
         .pitches-grid {
-          display: grid !important;
-          grid-template-columns: repeat(4, 1fr) !important;
-          gap: 10px !important;
+          grid-template-columns: 1fr;
+          gap: 0.85rem;
         }
 
         .pitch-container {
-          border: 1px solid #999 !important;
-          box-shadow: none !important;
-          padding: 6px !important;
-          break-inside: avoid;
+          padding: 0.75rem 0.65rem;
+          border-radius: 12px;
         }
 
         .pitch {
-          background: #4A7A57 !important;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
+          max-width: 100%;
+        }
+
+        .jersey {
+          width: 36px;
+          height: 36px;
+          font-size: 0.82rem;
         }
 
         .player-name {
-          background: #000000 !important;
-          color: #ffffff !important;
-          font-size: 0.65rem !important;
-          padding: 1px 3px !important;
-        }
-
-        .player-name.split {
-          padding: 2px 3px !important;
+          font-size: 0.74rem;
+          padding: 2px 5px;
+          max-width: 90px;
         }
 
         .player-name.split .sub-name {
-          font-size: 0.6rem !important;
+          font-size: 0.7rem;
+          max-width: 86px;
         }
 
-        .bench-container {
-          background: #f0f0f0 !important;
-          border: 1px solid #ccc !important;
-          padding: 4px !important;
+        /* Match Toolbar & Meta */
+        .match-toolbar {
+          grid-template-columns: 1fr 1fr;
+          gap: 0.4rem;
         }
 
-        .print-summary-table {
-          display: table !important;
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 14px;
-          font-size: 0.78rem;
+        .match-toolbar select {
+          grid-column: 1 / -1;
         }
 
-        .print-summary-table th,
-        .print-summary-table td {
-          border: 1px solid #ccc;
-          padding: 4px 8px;
-          text-align: left;
+        .match-toolbar button {
+          font-size: 0.8rem;
+          padding: 0.5rem 0.6rem;
         }
 
-        .print-summary-table th {
-          background: #eee;
+        .match-meta-grid {
+          grid-template-columns: 1fr;
+          gap: 0.5rem;
         }
-      }
 
-      .print-header {
-        display: none;
-      }
-      .print-summary-table {
-        display: none;
+        /* Modal optimization on mobile */
+        .modal-content {
+          width: 95%;
+          padding: 1.15rem 1rem;
+          max-height: 94vh;
+          border-radius: 14px;
+        }
+
+        /* Toast position above sticky bar */
+        .toast {
+          bottom: 74px;
+          left: 12px;
+          right: 12px;
+          justify-content: center;
+          font-size: 0.84rem;
+          padding: 10px 14px;
+        }
+
+        /* Mobile Sticky Bottom Action Bar */
+        .mobile-sticky-bar {
+          display: flex;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border-top: 1.5px solid var(--border-color);
+          padding: 0.55rem 0.85rem;
+          gap: 0.65rem;
+          z-index: 100;
+          box-shadow: 0 -4px 16px rgba(78, 47, 117, 0.1);
+        }
+
+        .mobile-sticky-bar .btn {
+          flex: 1;
+          padding: 0.65rem 0.5rem;
+          font-size: 0.86rem;
+          border-radius: 10px;
+        }
       }
     </style>
   </head>
@@ -1105,30 +1170,22 @@
       <header class="app-header">
         <div class="app-header-title">
           <h1>Ik Dien - Opstellingsplanner</h1>
-          <div class="app-subtitle">8 tegen 8 jeugd • 4 quarters (15 min) met 7,5 min wissels</div>
         </div>
         <div class="header-actions">
           <span id="autosaveBadge" class="autosave-badge">✓ Opgeslagen</span>
-          <button type="button" class="btn btn-whatsapp" id="exportWhatsappButton" title="Kopieer de opstelling en speelminuten als WhatsApp bericht">
-            📋 Deel via WhatsApp
-          </button>
-          <button type="button" class="btn btn-secondary" onclick="window.print()" title="Print dugout wedstrijdfiche">
-            🖨️ Print fiche
-          </button>
         </div>
       </header>
 
-      <!-- Print-only Header -->
-      <div class="print-header">
-        <h2 id="printMatchTitle" style="border:none; margin:0; font-size:1.4rem;">Ik Dien - Wedstrijdfiche</h2>
-        <div id="printMatchDate" style="font-size:0.9rem; color:#444;"></div>
-      </div>
-
       <!-- Left Panel: Players & Attendance -->
-      <div class="panel">
-        <h2>
-          <span>Spelerslijst</span>
-          <span id="squadCount" class="squad-count-badge">0</span>
+      <div class="panel squad-panel" id="squadPanel">
+        <h2 id="squadHeaderTitle">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <span>Spelerslijst</span>
+            <span id="squadCount" class="squad-count-badge">0</span>
+          </div>
+          <button type="button" id="squadToggleBtn" class="squad-toggle-btn" aria-label="Spelerslijst openen of sluiten">
+            <span id="squadToggleIcon">▼</span>
+          </button>
         </h2>
 
         <div class="squad-form-row">
@@ -1144,30 +1201,32 @@
           </form>
         </div>
 
-        <div class="squad-actions-row">
-          <div class="squad-sort">
-            <label for="squadSort">Sorteer:</label>
-            <select id="squadSort">
-              <option value="name">Alfabetisch (A-Z)</option>
-              <option value="minutes">Minuten (meeste eerst)</option>
-              <option value="attendance">Aanwezigheid</option>
-            </select>
+        <div id="squadPanelBody" class="squad-panel-body">
+          <div class="squad-actions-row">
+            <div class="squad-sort">
+              <label for="squadSort">Sorteer:</label>
+              <select id="squadSort">
+                <option value="name">Alfabetisch (A-Z)</option>
+                <option value="minutes">Minuten (meeste eerst)</option>
+                <option value="attendance">Aanwezigheid</option>
+              </select>
+            </div>
+            <div id="attendanceSummary" style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">
+              0 aanwezig
+            </div>
           </div>
-          <div id="attendanceSummary" style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">
-            0 aanwezig
-          </div>
-        </div>
 
-        <div class="target-legend" title="Speeltijddoel per speler voor een 60 min wedstrijd (4x15 min)">
-          <span>🎯 Doel: <strong>30–45 min</strong></span>
-          <div class="target-legend-pills">
-            <span class="legend-pill pill-danger" title="Onder doel (&lt;30 min)">&lt;30m</span>
-            <span class="legend-pill pill-balanced" title="In balans (30–45 min)">30–45m</span>
-            <span class="legend-pill pill-warning" style="background:var(--primary-light); color:var(--primary); border:1px solid var(--primary-tint);" title="Boven doel (&gt;45 min)">&gt;45m</span>
+          <div id="targetLegend" class="target-legend" title="Speeltijddoel per speler voor een 60 min wedstrijd (4x15 min)">
+            <span>🎯 Doel: <strong>30–45 min</strong></span>
+            <div class="target-legend-pills">
+              <span class="legend-pill pill-danger" title="Onder doel (&lt;30 min)">&lt;30m</span>
+              <span class="legend-pill pill-balanced" title="In balans (30–45 min)">30–45m</span>
+              <span class="legend-pill pill-warning" style="background:var(--primary-light); color:var(--primary); border:1px solid var(--primary-tint);" title="Boven doel (&gt;45 min)">&gt;45m</span>
+            </div>
           </div>
-        </div>
 
-        <div class="squad-list" id="squadList"></div>
+          <div class="squad-list" id="squadList"></div>
+        </div>
       </div>
 
       <!-- Right Panel: Matches & Tactical Pitches -->
@@ -1194,35 +1253,34 @@
             <label for="matchDate">Wedstrijddatum</label>
             <input type="date" id="matchDate" />
           </div>
+          <div class="form-group">
+            <label for="matchFormatSelect">Wedstrijdtype</label>
+            <select id="matchFormatSelect">
+              <option value="8v8_4x15">8 tegen 8 (4x15 min)</option>
+              <option value="8v8_4x20">8 tegen 8 (4x20 min)</option>
+              <option value="5v5_4x15">5 tegen 5 (4x15 min)</option>
+            </select>
+          </div>
         </div>
 
         <!-- Mobile Quarter Switcher Tabs -->
         <div class="quarter-tabs" id="quarterTabs">
-          <button type="button" class="quarter-tab-btn active" data-tab="all">Alles</button>
-          <button type="button" class="quarter-tab-btn" data-tab="1">Q1</button>
+          <button type="button" class="quarter-tab-btn" data-tab="all">Alles</button>
+          <button type="button" class="quarter-tab-btn active" data-tab="1">Q1</button>
           <button type="button" class="quarter-tab-btn" data-tab="2">Q2</button>
           <button type="button" class="quarter-tab-btn" data-tab="3">Q3</button>
           <button type="button" class="quarter-tab-btn" data-tab="4">Q4</button>
         </div>
 
         <div class="pitches-grid" id="pitchesGrid"></div>
-
-        <!-- Print-only Playing Time Summary Table -->
-        <table class="print-summary-table" id="printSummaryTable">
-          <thead>
-            <tr>
-              <th>Speler</th>
-              <th>Status</th>
-              <th>Q1</th>
-              <th>Q2</th>
-              <th>Q3</th>
-              <th>Q4</th>
-              <th>Totaal Min</th>
-            </tr>
-          </thead>
-          <tbody id="printSummaryBody"></tbody>
-        </table>
       </div>
+    </div>
+
+    <!-- Mobile Sticky Bottom Action Bar -->
+    <div class="mobile-sticky-bar" id="mobileStickyBar">
+      <button type="button" class="btn" id="stickySaveButton" title="Wedstrijd opslaan" style="width:100%;">
+        💾 Wedstrijd opslaan
+      </button>
     </div>
 
     <!-- Position Assignment Modal -->
@@ -1240,23 +1298,23 @@
 
         <label class="sub-toggle-box">
           <input type="checkbox" id="modalSubToggle" onchange="toggleSubMode()" />
-          <span class="sub-toggle-label">Wissel halverwege het quarter (na 7,5 min)</span>
+          <span id="modalSubToggleLabel" class="sub-toggle-label">Wissel halverwege het kwartier (na 7,5 min)</span>
         </label>
 
         <!-- Single Player Selector (Full Quarter) -->
         <div id="fullQuarterGroup" class="form-group">
-          <label for="fullQuarterSelect">Speler (volledig quarter)</label>
+          <label id="fullQuarterLabel" for="fullQuarterSelect">Speler (volledig kwartier)</label>
           <select id="fullQuarterSelect"></select>
         </div>
 
         <!-- Split Player Selector (1st & 2nd Half) -->
         <div id="splitQuarterGroup" style="display: none;">
           <div class="form-group">
-            <label for="half1Select">Eerste helft van het quarter (0:00 - 7:30)</label>
+            <label id="half1Label" for="half1Select">Eerste helft (0:00 - 7:30)</label>
             <select id="half1Select"></select>
           </div>
           <div class="form-group">
-            <label for="half2Select">Tweede helft van het quarter (7:30 - 15:00)</label>
+            <label id="half2Label" for="half2Select">Tweede helft (7:30 - 15:00)</label>
             <select id="half2Select"></select>
           </div>
         </div>
@@ -1271,7 +1329,6 @@
         </div>
       </div>
     </div>
-
 
     <!-- Toast Notification Banner -->
     <div id="toast" class="toast"></div>
@@ -1288,19 +1345,82 @@
       let matchDetails = {};
       let activePosition = null;
       let activeQuarter = null;
-      let activeMobileTab = "all";
-      const MINUTES_PER_HALF = 7.5; // 7 mins 30 secs
+      let activeMobileTab = window.innerWidth <= 640 ? "1" : "all";
 
-      const formationCoords = {
-        ST: { top: "15%", left: "50%" },
-        LW: { top: "30%", left: "20%" },
-        RW: { top: "30%", left: "80%" },
-        CM: { top: "50%", left: "50%" },
-        LB: { top: "68%", left: "20%" },
-        RB: { top: "68%", left: "80%" },
-        CB: { top: "80%", left: "50%" },
-        GK: { top: "92%", left: "50%" },
+      const MATCH_FORMATS = {
+        "8v8_4x15": {
+          id: "8v8_4x15",
+          name: "8 tegen 8 (4x15 min)",
+          shortLabel: "8v8 • 4x15m",
+          teamSize: 8,
+          quarters: 4,
+          quarterMinutes: 15,
+          halfMinutes: 7.5,
+          totalMinutes: 60,
+          subTimeLabel: "7'30",
+          targetMin: 30,
+          targetMax: 45,
+          formation: {
+            ST: { top: "15%", left: "50%", label: "Spits" },
+            LW: { top: "30%", left: "20%", label: "Linksbuiten" },
+            RW: { top: "30%", left: "80%", label: "Rechtsbuiten" },
+            CM: { top: "50%", left: "50%", label: "Middenvelder" },
+            LB: { top: "68%", left: "20%", label: "Linksachter" },
+            RB: { top: "68%", left: "80%", label: "Rechtsachter" },
+            CB: { top: "80%", left: "50%", label: "Centrale verdediger" },
+            GK: { top: "92%", left: "50%", label: "Doelman" },
+          },
+        },
+        "8v8_4x20": {
+          id: "8v8_4x20",
+          name: "8 tegen 8 (4x20 min)",
+          shortLabel: "8v8 • 4x20m",
+          teamSize: 8,
+          quarters: 4,
+          quarterMinutes: 20,
+          halfMinutes: 10,
+          totalMinutes: 80,
+          subTimeLabel: "10'00",
+          targetMin: 40,
+          targetMax: 60,
+          formation: {
+            ST: { top: "15%", left: "50%", label: "Spits" },
+            LW: { top: "30%", left: "20%", label: "Linksbuiten" },
+            RW: { top: "30%", left: "80%", label: "Rechtsbuiten" },
+            CM: { top: "50%", left: "50%", label: "Middenvelder" },
+            LB: { top: "68%", left: "20%", label: "Linksachter" },
+            RB: { top: "68%", left: "80%", label: "Rechtsachter" },
+            CB: { top: "80%", left: "50%", label: "Centrale verdediger" },
+            GK: { top: "92%", left: "50%", label: "Doelman" },
+          },
+        },
+        "5v5_4x15": {
+          id: "5v5_4x15",
+          name: "5 tegen 5 (4x15 min)",
+          shortLabel: "5v5 • 4x15m",
+          teamSize: 5,
+          quarters: 4,
+          quarterMinutes: 15,
+          halfMinutes: 7.5,
+          totalMinutes: 60,
+          subTimeLabel: "7'30",
+          targetMin: 35,
+          targetMax: 50,
+          formation: {
+            ST: { top: "18%", left: "50%", label: "Spits" },
+            LM: { top: "48%", left: "22%", label: "Linkerflank" },
+            RM: { top: "48%", left: "78%", label: "Rechterflank" },
+            CB: { top: "72%", left: "50%", label: "Verdediger" },
+            GK: { top: "92%", left: "50%", label: "Doelman" },
+          },
+        },
       };
+
+      function getCurrentFormat() {
+        const match = matches.find((m) => m.id === currentMatchId);
+        const formatId = match && match.format ? match.format : (typeof matchFormatSelect !== "undefined" && matchFormatSelect ? matchFormatSelect.value : "8v8_4x15");
+        return MATCH_FORMATS[formatId] || MATCH_FORMATS["8v8_4x15"];
+      }
 
       // --- DOM Elements ---
       const form = document.getElementById("addPlayerForm");
@@ -1316,10 +1436,14 @@
       const deleteMatchButton = document.getElementById("deleteMatchButton");
       const matchTitleInput = document.getElementById("matchTitle");
       const matchDateInput = document.getElementById("matchDate");
-      const exportWhatsappButton = document.getElementById("exportWhatsappButton");
+      const matchFormatSelect = document.getElementById("matchFormatSelect");
       const quarterTabsEl = document.getElementById("quarterTabs");
       const autosaveBadge = document.getElementById("autosaveBadge");
       const toastEl = document.getElementById("toast");
+      const squadToggleBtn = document.getElementById("squadToggleBtn");
+      const squadPanelBody = document.getElementById("squadPanelBody");
+      const squadHeaderTitle = document.getElementById("squadHeaderTitle");
+      const stickySaveButton = document.getElementById("stickySaveButton");
 
       // --- Storage & Loading ---
       function loadMatches() {
@@ -1328,6 +1452,7 @@
           const parsedMatches = savedMatches ? JSON.parse(savedMatches) : null;
           if (Array.isArray(parsedMatches) && parsedMatches.length > 0) {
             parsedMatches.forEach((m) => {
+              if (!m.format) m.format = "8v8_4x15";
               if (Array.isArray(m.players)) {
                 m.players.forEach((p) => {
                   if (p.present === undefined) p.present = true;
@@ -1346,6 +1471,7 @@
                 id: Date.now(),
                 title: legacyDetails.title || "Mijn eerste wedstrijd",
                 date: legacyDetails.date || "",
+                format: "8v8_4x15",
                 players: legacyPlayers,
               },
             ];
@@ -1389,7 +1515,9 @@
       function flashAutosave() {
         if (!autosaveBadge) return;
         autosaveBadge.style.opacity = "1";
-        autosaveBadge.textContent = "✓ Opgeslagen";
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        autosaveBadge.textContent = `✓ Opgeslagen om ${timeStr}`;
       }
 
       function showToast(message) {
@@ -1402,11 +1530,13 @@
 
       function syncCurrentMatchState() {
         let match = matches.find((m) => m.id === currentMatchId);
+        const currentFormat = matchFormatSelect.value || "8v8_4x15";
         if (!match) {
           match = {
             id: currentMatchId || Date.now(),
             title: matchTitleInput.value.trim() || "Wedstrijd " + (matches.length + 1),
             date: matchDateInput.value,
+            format: currentFormat,
             players: players,
           };
           currentMatchId = match.id;
@@ -1414,6 +1544,7 @@
         } else {
           match.title = matchTitleInput.value.trim();
           match.date = matchDateInput.value;
+          match.format = currentFormat;
           match.players = players;
         }
         saveMatches();
@@ -1426,19 +1557,18 @@
           players.forEach((p) => {
             if (p.present === undefined) p.present = true;
           });
-          matchDetails = { title: currentMatch.title, date: currentMatch.date };
+          matchDetails = {
+            title: currentMatch.title,
+            date: currentMatch.date,
+            format: currentMatch.format || "8v8_4x15",
+          };
         } else {
           players = [];
-          matchDetails = {};
+          matchDetails = { format: "8v8_4x15" };
         }
         matchTitleInput.value = matchDetails.title || "";
         matchDateInput.value = matchDetails.date || "";
-
-        // Update print headers
-        const printTitleEl = document.getElementById("printMatchTitle");
-        const printDateEl = document.getElementById("printMatchDate");
-        if (printTitleEl) printTitleEl.textContent = matchDetails.title || "Ik Dien - Wedstrijdfiche";
-        if (printDateEl) printDateEl.textContent = matchDetails.date ? `Datum: ${matchDetails.date}` : "";
+        matchFormatSelect.value = matchDetails.format || "8v8_4x15";
       }
 
       function renderMatchSelect() {
@@ -1450,9 +1580,10 @@
         }
 
         matches.forEach((match) => {
+          const fmt = MATCH_FORMATS[match.format] || MATCH_FORMATS["8v8_4x15"];
           const option = document.createElement("option");
           option.value = match.id;
-          option.textContent = `${match.title || "Naamloze wedstrijd"}${match.date ? ` - ${match.date}` : ""}`;
+          option.textContent = `${match.title || "Naamloze wedstrijd"}${match.date ? ` - ${match.date}` : ""} [${fmt.shortLabel}]`;
           matchSelect.appendChild(option);
         });
 
@@ -1480,12 +1611,14 @@
         matchDetails = {
           title: "Nieuwe wedstrijd",
           date: new Date().toISOString().split("T")[0],
+          format: matchFormatSelect ? matchFormatSelect.value : "8v8_4x15",
         };
 
         const newMatch = {
           id: currentMatchId,
           title: matchDetails.title,
           date: matchDetails.date,
+          format: matchDetails.format,
           players: players,
         };
 
@@ -1533,18 +1666,21 @@
 
       matchTitleInput.addEventListener("input", function () {
         matchDetails.title = matchTitleInput.value;
-        const printTitleEl = document.getElementById("printMatchTitle");
-        if (printTitleEl) printTitleEl.textContent = matchTitleInput.value || "Ik Dien - Wedstrijdfiche";
         syncCurrentMatchState();
         renderMatchSelect();
       });
 
       matchDateInput.addEventListener("input", function () {
         matchDetails.date = matchDateInput.value;
-        const printDateEl = document.getElementById("printMatchDate");
-        if (printDateEl) printDateEl.textContent = matchDateInput.value ? `Datum: ${matchDateInput.value}` : "";
         syncCurrentMatchState();
         renderMatchSelect();
+      });
+
+      matchFormatSelect.addEventListener("change", function () {
+        matchDetails.format = matchFormatSelect.value;
+        syncCurrentMatchState();
+        renderMatchSelect();
+        renderApp();
       });
 
       squadSort.addEventListener("change", renderSquadList);
@@ -1568,6 +1704,48 @@
           } else {
             container.classList.add("hidden-by-tab");
           }
+        });
+
+        // Sync tab button active classes
+        document.querySelectorAll(".quarter-tab-btn").forEach((btn) => {
+          if (btn.dataset.tab === activeMobileTab) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+      }
+
+      // Mobile collapsible squad toggle
+      function toggleSquadPanel() {
+        if (!squadPanelBody) return;
+        const isExpanded = squadPanelBody.classList.toggle("expanded");
+        if (squadToggleBtn) {
+          squadToggleBtn.classList.toggle("expanded", isExpanded);
+        }
+      }
+
+      if (squadToggleBtn) {
+        squadToggleBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          toggleSquadPanel();
+        });
+      }
+
+      if (squadHeaderTitle) {
+        squadHeaderTitle.addEventListener("click", function () {
+          if (window.innerWidth <= 640) {
+            toggleSquadPanel();
+          }
+        });
+      }
+
+      // Mobile sticky bottom bar action buttons
+      if (stickySaveButton) {
+        stickySaveButton.addEventListener("click", function () {
+          syncCurrentMatchState();
+          renderMatchSelect();
+          showToast("Wedstrijd opgeslagen!");
         });
       }
 
@@ -1655,98 +1833,6 @@
         showToast(`Opstelling van Q${sourceQuarter} gekopieerd naar Q${targetQuarter}!`);
       };
 
-      // --- WhatsApp Export (Step 1) ---
-      exportWhatsappButton.addEventListener("click", generateWhatsAppText);
-
-      function generateWhatsAppText() {
-        const title = matchDetails.title || "Ik Dien Wedstrijd";
-        const date = matchDetails.date ? ` (${matchDetails.date})` : "";
-        const presentPlayers = players.filter((p) => p.present !== false);
-
-        if (presentPlayers.length === 0) {
-          alert("Voeg eerst spelers toe aan de selectie.");
-          return;
-        }
-
-        let text = `📋 *${title}${date}*\n`;
-        text += `⚽ Opstelling Ik Dien (8v8) per Q\n`;
-        text += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-
-        for (let q = 1; q <= 4; q++) {
-          text += `*Q${q}*\n`;
-
-          const starters = [];
-          const substitutions = [];
-          const bench = [];
-
-          Object.keys(formationCoords).forEach((pos) => {
-            const p1 = players.find((p) => p.assignments[q][1] === pos);
-            const p2 = players.find((p) => p.assignments[q][2] === pos);
-
-            if (p1 && p2 && p1.id === p2.id) {
-              starters.push(`${pos}: ${p1.name}`);
-            } else if (p1 || p2) {
-              const name1 = p1 ? p1.name : "-";
-              const name2 = p2 ? p2.name : "-";
-              starters.push(`${pos}: ${name1}`);
-              substitutions.push(`${pos}: ${name1} 🔄 ${name2}`);
-            } else {
-              starters.push(`${pos}: [open]`);
-            }
-          });
-
-          presentPlayers.forEach((p) => {
-            const h1 = p.assignments[q][1];
-            const h2 = p.assignments[q][2];
-            if (!h1) {
-              if (h2) {
-                bench.push(`${p.name} (valt in na 7'30)`);
-              } else {
-                bench.push(p.name);
-              }
-            }
-          });
-
-          text += `• *Opstelling:* ${starters.join(" | ")}\n`;
-          if (substitutions.length > 0) {
-            text += `• *Wissels (7'30):* ${substitutions.join(", ")}\n`;
-          }
-          text += `• *Wisselbank:* ${bench.length > 0 ? bench.join(", ") : "Geen"}\n\n`;
-        }
-
-        text += `━━━━━━━━━━━━━━━━━━━━\n`;
-        text += `*GESPEELDE MINUTEN*\n`;
-        const sorted = [...presentPlayers].sort(
-          (a, b) => getPlayedMinutes(b) - getPlayedMinutes(a) || a.name.localeCompare(b.name)
-        );
-        sorted.forEach((p) => {
-          text += `• ${p.name}: ${getPlayedMinutes(p)} min\n`;
-        });
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(
-            () => {
-              showToast("📋 Opstelling gekopieerd voor WhatsApp!");
-            },
-            () => {
-              fallbackCopy(text);
-            }
-          );
-        } else {
-          fallbackCopy(text);
-        }
-      }
-
-      function fallbackCopy(text) {
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textarea);
-        showToast("📋 Opstelling gekopieerd voor WhatsApp!");
-      }
-
       // --- Streamlined & Smart Modal System (Step 2) ---
       const modalSubToggle = document.getElementById("modalSubToggle");
       const fullQuarterGroup = document.getElementById("fullQuarterGroup");
@@ -1758,8 +1844,28 @@
       window.openModal = function (quarter, pos) {
         activePosition = pos;
         activeQuarter = quarter;
+        const currentFormat = getCurrentFormat();
         document.getElementById("modalPosName").textContent = pos;
         document.getElementById("modalQuarterName").textContent = quarter;
+
+        // Dynamic labels for current format
+        const subToggleLabel = document.getElementById("modalSubToggleLabel");
+        const fullQuarterLabel = document.getElementById("fullQuarterLabel");
+        const half1Label = document.getElementById("half1Label");
+        const half2Label = document.getElementById("half2Label");
+
+        if (subToggleLabel) {
+          subToggleLabel.textContent = `Wissel halverwege het kwartier (na ${currentFormat.subTimeLabel} min)`;
+        }
+        if (fullQuarterLabel) {
+          fullQuarterLabel.textContent = `Speler (volledig kwartier: ${currentFormat.quarterMinutes} min)`;
+        }
+        if (half1Label) {
+          half1Label.textContent = `Eerste helft (0:00 - ${currentFormat.subTimeLabel})`;
+        }
+        if (half2Label) {
+          half2Label.textContent = `Tweede helft (${currentFormat.subTimeLabel} - ${currentFormat.quarterMinutes}:00)`;
+        }
 
         const p1 = players.find((p) => p.assignments[quarter][1] === pos);
         const p2 = players.find((p) => p.assignments[quarter][2] === pos);
@@ -1916,24 +2022,43 @@
       };
 
       function getPlayedMinutes(player) {
+        const fmt = getCurrentFormat();
         let halvesPlayed = 0;
         for (let q = 1; q <= 4; q++) {
           if (player.assignments[q][1]) halvesPlayed++;
           if (player.assignments[q][2]) halvesPlayed++;
         }
-        return halvesPlayed * MINUTES_PER_HALF;
+        return halvesPlayed * fmt.halfMinutes;
       }
 
       // --- Render System ---
       function renderApp() {
         renderSquadList();
         renderPitches();
-        renderPrintSummary();
       }
 
       function renderSquadList() {
         squadListEl.innerHTML = "";
         squadCountEl.textContent = players.length;
+
+        const currentFormat = getCurrentFormat();
+        const targetMin = currentFormat.targetMin;
+        const targetMax = currentFormat.targetMax;
+        const totalMatchMinutes = currentFormat.totalMinutes;
+
+        // Update target legend dynamically
+        const targetLegendEl = document.getElementById("targetLegend");
+        if (targetLegendEl) {
+          targetLegendEl.title = `Speeltijddoel per speler voor een ${totalMatchMinutes} min wedstrijd (${currentFormat.name})`;
+          targetLegendEl.innerHTML = `
+            <span>🎯 Doel: <strong>${targetMin}–${targetMax} min</strong></span>
+            <div class="target-legend-pills">
+              <span class="legend-pill pill-danger" title="Onder doel (&lt;${targetMin} min)">&lt;${targetMin}m</span>
+              <span class="legend-pill pill-balanced" title="In balans (${targetMin}–${targetMax} min)">${targetMin}–${targetMax}m</span>
+              <span class="legend-pill pill-warning" style="background:var(--primary-light); color:var(--primary); border:1px solid var(--primary-tint);" title="Boven doel (&gt;${targetMax} min)">&gt;${targetMax}m</span>
+            </div>
+          `;
+        }
 
         const presentCount = players.filter((p) => p.present !== false).length;
         attendanceSummaryEl.textContent = `${presentCount} van ${players.length} aanwezig`;
@@ -1960,6 +2085,10 @@
           return playerA.name.localeCompare(playerB.name);
         });
 
+        // Target zone CSS position for the track
+        const zoneLeft = ((targetMin / totalMatchMinutes) * 100).toFixed(1);
+        const zoneWidth = (((targetMax - targetMin) / totalMatchMinutes) * 100).toFixed(1);
+
         sortedPlayers.forEach((p) => {
           const item = document.createElement("div");
           const isPresent = p.present !== false;
@@ -1978,22 +2107,22 @@
           } else if (totalMinutes === 0) {
             timeBadgeClass += " danger";
             statusClass = "danger";
-            targetTooltip = "0 min - Onder doel (doel: 30–45 min)";
-          } else if (totalMinutes < 30) {
+            targetTooltip = `0 min - Onder doel (doel: ${targetMin}–${targetMax} min)`;
+          } else if (totalMinutes < targetMin) {
             timeBadgeClass += " warning";
             statusClass = "warning";
-            targetTooltip = `${totalMinutes} min - Onder doel (doel: 30–45 min)`;
-          } else if (totalMinutes <= 45) {
+            targetTooltip = `${totalMinutes} min - Onder doel (doel: ${targetMin}–${targetMax} min)`;
+          } else if (totalMinutes <= targetMax) {
             timeBadgeClass += " balanced";
             statusClass = "balanced";
-            targetTooltip = `${totalMinutes} min - In balans (doel: 30–45 min)`;
+            targetTooltip = `${totalMinutes} min - In balans (doel: ${targetMin}–${targetMax} min)`;
           } else {
             timeBadgeClass += " high";
             statusClass = "high";
-            targetTooltip = `${totalMinutes} min - Boven doel (doel: 30–45 min)`;
+            targetTooltip = `${totalMinutes} min - Boven doel (doel: ${targetMin}–${targetMax} min)`;
           }
 
-          const fillPercent = isPresent ? Math.min(100, Math.round((totalMinutes / 60) * 100)) : 0;
+          const fillPercent = isPresent ? Math.min(100, Math.round((totalMinutes / totalMatchMinutes) * 100)) : 0;
 
           item.innerHTML = `
             <div class="squad-item-info">
@@ -2014,7 +2143,7 @@
               ${isPresent ? `
               <div class="target-bar-container" title="${targetTooltip}">
                 <div class="target-bar-track">
-                  <div class="target-bar-zone" title="Doelzone: 30–45 min"></div>
+                  <div class="target-bar-zone" style="left:${zoneLeft}%; width:${zoneWidth}%;" title="Doelzone: ${targetMin}–${targetMax} min"></div>
                   <div class="target-bar-fill ${statusClass}" style="width: ${fillPercent}%;"></div>
                 </div>
               </div>` : ""}
@@ -2028,6 +2157,7 @@
       function renderPitches() {
         pitchesGridEl.innerHTML = "";
         const presentPlayers = players.filter((p) => p.present !== false);
+        const currentFormat = getCurrentFormat();
 
         for (let q = 1; q <= 4; q++) {
           const pitchContainer = document.createElement("div");
@@ -2069,10 +2199,10 @@
           const fieldedPlayerIds = new Set();
           const halfFieldedPlayerIds = new Set();
 
-          Object.keys(formationCoords).forEach((pos) => {
+          Object.keys(currentFormat.formation).forEach((pos) => {
             const p1 = players.find((p) => p.assignments[q][1] === pos);
             const p2 = players.find((p) => p.assignments[q][2] === pos);
-            const coords = formationCoords[pos];
+            const coords = currentFormat.formation[pos];
 
             if (p1) fieldedPlayerIds.add(p1.id);
             if (p2) fieldedPlayerIds.add(p2.id);
@@ -2145,7 +2275,7 @@
                 chip.textContent = p.name;
               } else {
                 chip.className = "bench-chip partial-bench";
-                chip.innerHTML = `${p.name} <span class="bench-sub-note">(valt in na 7'30)</span>`;
+                chip.innerHTML = `${p.name} <span class="bench-sub-note">(valt in na ${currentFormat.subTimeLabel})</span>`;
               }
               benchList.appendChild(chip);
             }
@@ -2169,41 +2299,6 @@
         updateMobileTabVisibility();
       }
 
-      function renderPrintSummary() {
-        const tbody = document.getElementById("printSummaryBody");
-        if (!tbody) return;
-        tbody.innerHTML = "";
-
-        const presentPlayers = players.filter((p) => p.present !== false);
-        const sorted = [...presentPlayers].sort(
-          (a, b) => getPlayedMinutes(b) - getPlayedMinutes(a) || a.name.localeCompare(b.name)
-        );
-
-        sorted.forEach((p) => {
-          const row = document.createElement("tr");
-          let qCols = "";
-          for (let q = 1; q <= 4; q++) {
-            const h1 = p.assignments[q][1];
-            const h2 = p.assignments[q][2];
-            if (h1 && h1 === h2) {
-              qCols += `<td>${h1}</td>`;
-            } else if (h1 || h2) {
-              qCols += `<td>${h1 || "-"}/${h2 || "-"}</td>`;
-            } else {
-              qCols += `<td style="color:#888;">Bank</td>`;
-            }
-          }
-
-          row.innerHTML = `
-            <td><strong>${p.name}</strong></td>
-            <td>Aanwezig</td>
-            ${qCols}
-            <td><strong>${getPlayedMinutes(p)} min</strong></td>
-          `;
-          tbody.appendChild(row);
-        });
-      }
-
       // --- Initialization ---
       if (matches.length === 0) {
         startNewMatch();
@@ -2211,6 +2306,7 @@
         loadCurrentMatch();
         renderMatchSelect();
         renderApp();
+        flashAutosave();
       }
     </script>
   </body>
