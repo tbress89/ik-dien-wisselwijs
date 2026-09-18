@@ -1558,9 +1558,10 @@
             <div class="form-group">
               <label for="matchFormatSelect">Wedstrijdtype</label>
               <select id="matchFormatSelect">
+                <option value="5v5_4x15">5 tegen 5 (4x15 min)</option>
                 <option value="8v8_4x15">8 tegen 8 (4x15 min)</option>
                 <option value="8v8_4x20">8 tegen 8 (4x20 min)</option>
-                <option value="5v5_4x15">5 tegen 5 (4x15 min)</option>
+                <option value="11v11_4x20">11 tegen 11 (4x20 min)</option>
               </select>
             </div>
           </div>
@@ -1605,9 +1606,10 @@
           <div class="form-group">
             <label for="newMatchFormatInput">Wedstrijdtype</label>
             <select id="newMatchFormatInput">
+              <option value="5v5_4x15">5 tegen 5 (4x15 min)</option>
               <option value="8v8_4x15">8 tegen 8 (4x15 min)</option>
               <option value="8v8_4x20">8 tegen 8 (4x20 min)</option>
-              <option value="5v5_4x15">5 tegen 5 (4x15 min)</option>
+              <option value="11v11_4x20">11 tegen 11 (4x20 min)</option>
             </select>
           </div>
           <div id="inheritPlayersGroup" class="form-group" style="margin-top:0.25rem;">
@@ -1643,12 +1645,12 @@
 
         <label class="sub-toggle-box">
           <input type="checkbox" id="modalSubToggle" onchange="toggleSubMode()" />
-          <span id="modalSubToggleLabel" class="sub-toggle-label">Wissel halverwege het kwartier (na 7,5 min)</span>
+          <span id="modalSubToggleLabel" class="sub-toggle-label">Wissel halverwege het quarter (na 7,5 min)</span>
         </label>
 
         <!-- Single Player Selector (Full Quarter) -->
         <div id="fullQuarterGroup" class="form-group">
-          <label id="fullQuarterLabel" for="fullQuarterSelect">Speler (volledig kwartier)</label>
+          <label id="fullQuarterLabel" for="fullQuarterSelect">Speler (volledig quarter)</label>
           <select id="fullQuarterSelect"></select>
         </div>
 
@@ -1757,6 +1759,32 @@
             LM: { top: "48%", left: "22%", label: "Linkerflank" },
             RM: { top: "48%", left: "78%", label: "Rechterflank" },
             CB: { top: "72%", left: "50%", label: "Verdediger" },
+            GK: { top: "92%", left: "50%", label: "Doelman" },
+          },
+        },
+        "11v11_4x20": {
+          id: "11v11_4x20",
+          name: "11 tegen 11 (4x20 min)",
+          shortLabel: "11v11 • 4x20m",
+          teamSize: 11,
+          quarters: 4,
+          quarterMinutes: 20,
+          halfMinutes: 10,
+          totalMinutes: 80,
+          subTimeLabel: "10'00",
+          targetMin: 40, // Adjusted for a typical 11v11 squad size
+          targetMax: 80,
+          formation: {
+            "9": { top: "18%", left: "50%", label: "Spits" },
+            "11": { top: "25%", left: "20%", label: "Linksbuiten" },
+            "7": { top: "25%", left: "80%", label: "Rechtsbuiten" },
+            "8": { top: "55%", left: "30%", label: "Box-to-box middenvelder" },
+            "10": { top: "40%", left: "50%", label: "Spelmaker" },
+            "6": { top: "55%", left: "70%", label: "Defensieve middenvelder" },
+            "3": { top: "72%", left: "15%", label: "Linksachter" },
+            "4": { top: "78%", left: "35%", label: "Centrale verdediger (L)" },
+            "5": { top: "78%", left: "65%", label: "Centrale verdediger (R)" },
+            "2": { top: "72%", left: "85%", label: "Rechtsachter" },
             GK: { top: "92%", left: "50%", label: "Doelman" },
           },
         },
@@ -2395,10 +2423,10 @@
         const half2Label = document.getElementById("half2Label");
 
         if (subToggleLabel) {
-          subToggleLabel.textContent = `Wissel halverwege het kwartier (na ${currentFormat.subTimeLabel} min)`;
+          subToggleLabel.textContent = `Wissel halverwege het quarter (na ${currentFormat.subTimeLabel} min)`;
         }
         if (fullQuarterLabel) {
-          fullQuarterLabel.textContent = `Speler (volledig kwartier: ${currentFormat.quarterMinutes} min)`;
+          fullQuarterLabel.textContent = `Speler (volledig quarter: ${currentFormat.quarterMinutes} min)`;
         }
         if (half1Label) {
           half1Label.textContent = `Eerste helft (0:00 - ${currentFormat.subTimeLabel})`;
