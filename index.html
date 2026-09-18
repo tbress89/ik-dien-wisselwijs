@@ -406,34 +406,119 @@
         font-weight: 700;
         border: 1px solid var(--primary-tint);
         white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        transition: all 0.2s;
       }
-      .time-badge.zero {
-        background: var(--bg-body);
-        color: var(--text-muted);
-        border-color: var(--border-color);
+      .time-badge.danger {
+        background: var(--danger-bg);
+        color: var(--danger);
+        border-color: var(--danger-border);
       }
-      .time-badge.good {
+      .time-badge.warning {
+        background: var(--warning-bg);
+        color: var(--warning);
+        border-color: var(--warning-border);
+      }
+      .time-badge.balanced {
         background: var(--success-bg);
         color: var(--success);
         border-color: var(--success-border);
       }
+      .time-badge.high {
+        background: var(--primary-light);
+        color: var(--primary);
+        border-color: var(--primary-tint);
+      }
+      .time-badge.absent {
+        background: var(--bg-body);
+        color: var(--text-muted);
+        border-color: var(--border-color);
+      }
 
-      .badges-container {
+      /* --- Equal Time Visual Target Bar --- */
+      .target-legend {
         display: flex;
-        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--primary-light);
+        border: 1px solid var(--primary-tint);
+        border-radius: 6px;
+        padding: 4px 8px;
+        margin-bottom: 0.65rem;
+        font-size: 0.73rem;
+        color: var(--primary-dark);
+        font-weight: 600;
+      }
+      .target-legend-pills {
+        display: flex;
         gap: 4px;
       }
-      .pos-badge {
-        background: var(--primary);
-        color: var(--text-light);
+      .legend-pill {
         font-size: 0.65rem;
-        padding: 2px 5px;
+        padding: 1px 5px;
         border-radius: 4px;
         font-weight: 700;
-        letter-spacing: 0.3px;
       }
-      .pos-badge.sub {
-        background: var(--sub-color);
+      .legend-pill.pill-danger {
+        background: var(--danger-bg);
+        color: var(--danger);
+        border: 1px solid var(--danger-border);
+      }
+      .legend-pill.pill-warning {
+        background: var(--warning-bg);
+        color: var(--warning);
+        border: 1px solid var(--warning-border);
+      }
+      .legend-pill.pill-balanced {
+        background: var(--success-bg);
+        color: var(--success);
+        border: 1px solid var(--success-border);
+      }
+
+      .target-bar-container {
+        width: 100%;
+        margin: 4px 0 2px 0;
+      }
+      .target-bar-track {
+        width: 100%;
+        height: 5px;
+        background: #ECE7F4;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+      }
+      /* Highlighted target zone 30-45 min (50% to 75% of 60 min match) */
+      .target-bar-zone {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 25%;
+        background: rgba(21, 128, 61, 0.18);
+        border-left: 1px dashed rgba(21, 128, 61, 0.4);
+        border-right: 1px dashed rgba(21, 128, 61, 0.4);
+        z-index: 1;
+      }
+      .target-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease, background-color 0.3s ease;
+        position: relative;
+        z-index: 2;
+      }
+      .target-bar-fill.danger {
+        background-color: var(--danger);
+      }
+      .target-bar-fill.warning {
+        background-color: #EAB308;
+      }
+      .target-bar-fill.balanced {
+        background-color: var(--success);
+      }
+      .target-bar-fill.high {
+        background-color: var(--primary);
       }
 
       .remove-btn {
@@ -773,7 +858,7 @@
       .bench-chip.partial-bench {
         border-left: 3px solid var(--sub-color);
       }
-      .bench-min {
+      .bench-sub-note {
         font-size: 0.68rem;
         color: var(--text-muted);
         font-weight: normal;
@@ -1070,6 +1155,15 @@
           </div>
           <div id="attendanceSummary" style="font-size:0.78rem; font-weight:700; color:var(--text-muted);">
             0 aanwezig
+          </div>
+        </div>
+
+        <div class="target-legend" title="Speeltijddoel per speler voor een 60 min wedstrijd (4x15 min)">
+          <span>🎯 Doel: <strong>30–45 min</strong></span>
+          <div class="target-legend-pills">
+            <span class="legend-pill pill-danger" title="Onder doel (&lt;30 min)">&lt;30m</span>
+            <span class="legend-pill pill-balanced" title="In balans (30–45 min)">30–45m</span>
+            <span class="legend-pill pill-warning" style="background:var(--primary-light); color:var(--primary); border:1px solid var(--primary-tint);" title="Boven doel (&gt;45 min)">&gt;45m</span>
           </div>
         </div>
 
@@ -1871,27 +1965,35 @@
           const isPresent = p.present !== false;
           item.className = `squad-item${isPresent ? "" : " absent"}`;
 
-          let badgesHtml = "";
           const totalMinutes = getPlayedMinutes(p);
 
-          for (let q = 1; q <= 4; q++) {
-            const h1 = p.assignments[q][1];
-            const h2 = p.assignments[q][2];
-
-            if (h1 && h1 === h2) {
-              badgesHtml += `<span class="pos-badge">Q${q}: ${h1}</span>`;
-            } else {
-              if (h1) badgesHtml += `<span class="pos-badge">Q${q} (1e): ${h1}</span>`;
-              if (h2) badgesHtml += `<span class="pos-badge pos-badge sub">Q${q} (2e): ${h2}</span>`;
-            }
-          }
-
           let timeBadgeClass = "time-badge";
-          if (!isPresent || totalMinutes === 0) {
-            timeBadgeClass += " zero";
-          } else if (totalMinutes >= 30 && totalMinutes <= 45) {
-            timeBadgeClass += " good";
+          let statusClass = "balanced";
+          let targetTooltip = "";
+
+          if (!isPresent) {
+            timeBadgeClass += " absent";
+            statusClass = "absent";
+            targetTooltip = "Afwezig";
+          } else if (totalMinutes === 0) {
+            timeBadgeClass += " danger";
+            statusClass = "danger";
+            targetTooltip = "0 min - Onder doel (doel: 30–45 min)";
+          } else if (totalMinutes < 30) {
+            timeBadgeClass += " warning";
+            statusClass = "warning";
+            targetTooltip = `${totalMinutes} min - Onder doel (doel: 30–45 min)`;
+          } else if (totalMinutes <= 45) {
+            timeBadgeClass += " balanced";
+            statusClass = "balanced";
+            targetTooltip = `${totalMinutes} min - In balans (doel: 30–45 min)`;
+          } else {
+            timeBadgeClass += " high";
+            statusClass = "high";
+            targetTooltip = `${totalMinutes} min - Boven doel (doel: 30–45 min)`;
           }
+
+          const fillPercent = isPresent ? Math.min(100, Math.round((totalMinutes / 60) * 100)) : 0;
 
           item.innerHTML = `
             <div class="squad-item-info">
@@ -1907,9 +2009,15 @@
                   </button>
                   <span class="squad-name">${p.name}</span>
                 </div>
-                <span class="${timeBadgeClass}">⏱ ${totalMinutes} min</span>
+                <span class="${timeBadgeClass}" title="${targetTooltip}">⏱ ${totalMinutes} min</span>
               </div>
-              <div class="badges-container">${badgesHtml}</div>
+              ${isPresent ? `
+              <div class="target-bar-container" title="${targetTooltip}">
+                <div class="target-bar-track">
+                  <div class="target-bar-zone" title="Doelzone: 30–45 min"></div>
+                  <div class="target-bar-fill ${statusClass}" style="width: ${fillPercent}%;"></div>
+                </div>
+              </div>` : ""}
             </div>
             <button class="remove-btn" title="Speler definitief verwijderen" onclick="deletePlayer(${p.id})">×</button>
           `;
@@ -2026,18 +2134,18 @@
           presentPlayers.forEach((p) => {
             const h1 = p.assignments[q][1];
             const h2 = p.assignments[q][2];
-            const totalMins = getPlayedMinutes(p);
 
             // Only show players who actually start this quarter on the bench (!h1)
             if (!h1) {
               benchCount++;
               const chip = document.createElement("span");
+
               if (!h2) {
                 chip.className = "bench-chip full-bench";
-                chip.innerHTML = `${p.name} <span class="bench-min"></span>`;
+                chip.textContent = p.name;
               } else {
                 chip.className = "bench-chip partial-bench";
-                chip.innerHTML = `${p.name} <span class="bench-min">(valt in na 7'30)</span>`;
+                chip.innerHTML = `${p.name} <span class="bench-sub-note">(valt in na 7'30)</span>`;
               }
               benchList.appendChild(chip);
             }
