@@ -997,14 +997,10 @@
         background: var(--primary-tint);
       }
 
-      .mobile-sticky-bar {
-        display: none;
-      }
-
       /* --- Mobile Responsive Enhancements (<= 640px) --- */
       @media (max-width: 640px) {
         body {
-          padding: 0.65rem 0.5rem 5.5rem;
+          padding: 0.65rem 0.5rem 2.5rem;
         }
 
         .container {
@@ -1148,39 +1144,6 @@
           border-radius: 14px;
         }
 
-        /* Toast position above sticky bar */
-        .toast {
-          bottom: 74px;
-          left: 12px;
-          right: 12px;
-          justify-content: center;
-          font-size: 0.84rem;
-          padding: 10px 14px;
-        }
-
-        /* Mobile Sticky Bottom Action Bar */
-        .mobile-sticky-bar {
-          display: flex;
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border-top: 1.5px solid var(--border-color);
-          padding: 0.55rem 0.85rem;
-          gap: 0.65rem;
-          z-index: 100;
-          box-shadow: 0 -4px 16px rgba(78, 47, 117, 0.1);
-        }
-
-        .mobile-sticky-bar .btn {
-          flex: 1;
-          padding: 0.65rem 0.5rem;
-          font-size: 0.86rem;
-          border-radius: 10px;
-        }
       }
 
       /* --- View Screens Switcher --- */
@@ -1570,9 +1533,6 @@
             <button type="button" class="btn btn-secondary" id="newMatchButton">
               + Nieuwe wedstrijd
             </button>
-            <button type="button" class="btn" id="saveMatchButton">
-              Wedstrijd opslaan
-            </button>
             <button type="button" class="btn btn-secondary" id="deleteMatchButton" title="Verwijder huidige wedstrijd">
               Verwijderen
             </button>
@@ -1610,12 +1570,6 @@
         </div>
       </div>
 
-      <!-- Mobile Sticky Bottom Action Bar -->
-      <div class="mobile-sticky-bar" id="mobileStickyBar">
-        <button type="button" class="btn" id="stickySaveButton" title="Wedstrijd opslaan" style="width:100%;">
-          💾 Wedstrijd opslaan
-        </button>
-      </div>
     </div>
 
     <!-- Create New Match Modal -->
@@ -1659,7 +1613,7 @@
               Annuleren
             </button>
             <button type="submit" class="btn" style="flex:1.5;">
-              Wedstrijd starten
+              Wedstrijd aanmaken
             </button>
           </div>
         </form>
@@ -1834,7 +1788,6 @@
       const squadSort = document.getElementById("squadSort");
       const matchSelect = document.getElementById("matchSelect");
       const newMatchButton = document.getElementById("newMatchButton");
-      const saveMatchButton = document.getElementById("saveMatchButton");
       const deleteMatchButton = document.getElementById("deleteMatchButton");
       const matchTitleInput = document.getElementById("matchTitle");
       const matchDateInput = document.getElementById("matchDate");
@@ -1845,7 +1798,6 @@
       const squadToggleBtn = document.getElementById("squadToggleBtn");
       const squadPanelBody = document.getElementById("squadPanelBody");
       const squadHeaderTitle = document.getElementById("squadHeaderTitle");
-      const stickySaveButton = document.getElementById("stickySaveButton");
 
       // --- Storage & Loading ---
       function loadMatches() {
@@ -2251,11 +2203,6 @@
       });
 
       newMatchButton.addEventListener("click", startNewMatch);
-      saveMatchButton.addEventListener("click", function () {
-        syncCurrentMatchState();
-        renderMatchSelect();
-        showToast("Wedstrijd opgeslagen!");
-      });
       deleteMatchButton.addEventListener("click", deleteCurrentMatch);
 
       matchTitleInput.addEventListener("input", function () {
@@ -2331,15 +2278,6 @@
           if (window.innerWidth <= 640) {
             toggleSquadPanel();
           }
-        });
-      }
-
-      // Mobile sticky bottom bar action buttons
-      if (stickySaveButton) {
-        stickySaveButton.addEventListener("click", function () {
-          syncCurrentMatchState();
-          renderMatchSelect();
-          showToast("Wedstrijd opgeslagen!");
         });
       }
 
